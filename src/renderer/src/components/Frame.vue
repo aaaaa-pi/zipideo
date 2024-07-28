@@ -10,7 +10,7 @@
         </el-select>
       </div>
       <div class="flex-auto">
-        <p>帧</p>
+        <p>帧数</p>
         <el-select>
           <el-option></el-option>
         </el-select>

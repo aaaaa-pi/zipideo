@@ -27,7 +27,8 @@
     "electron-updater": "^6.1.7",
     "element-plus": "^2.7.8",
     "sass": "^1.77.8",
-    "scss": "^0.2.4"
+    "scss": "^0.2.4",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",
