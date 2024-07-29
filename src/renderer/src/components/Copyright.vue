@@ -39,7 +39,7 @@
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
   }
   .github-bug {
-    @apply flex items-center text-xs h-[30px] px-1 rounded-lg mr-3 border-dashed border-2 border-blue-600 text-[#0a65cc];
+    @apply flex items-center text-xs h-[30px] px-1 rounded-lg mr-3 border-2 border-blue-600 text-[#0a65cc];
   }
 }
 </style>
