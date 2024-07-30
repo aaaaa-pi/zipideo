@@ -7,6 +7,6 @@ import Copyright from './components/Copyright.vue'
   <main>
     <Navbar />
     <RouterView />
-    <Copyright class="mt-3" />
+    <Copyright class="mt-3 mb-3" />
   </main>
 </template>
