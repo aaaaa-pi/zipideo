@@ -1,5 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Card from '@renderer/components/Card.vue'
+</script>
 
 <template>
-  <main></main>
+  <main>
+    <Card title="分辨率"></Card>
+    <Card title="帧数"></Card>
+  </main>
 </template>
