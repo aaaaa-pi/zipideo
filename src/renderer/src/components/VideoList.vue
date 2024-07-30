@@ -26,7 +26,7 @@ const videoList = ref([1, 2, 3, 4])
     @apply bg-slate-100 px-3 py-1 rounded-lg mb-2 mx-3 text-xs text-slate-600 flex justify-between items-center;
 
     .icon {
-      @apply text-slate-500 opacity-50 hover:scale-125 duration-300 hover:text-blue-600 hover:opacity-90 cursor-pointer;
+      @apply text-slate-500 opacity-50 hover:scale-125 duration-300 hover:text-red-500 hover:opacity-90 cursor-pointer;
     }
   }
 }
