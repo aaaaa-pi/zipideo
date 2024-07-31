@@ -17,7 +17,7 @@ const list = computed(() => {
   return props.type === 'size' ? config.sizes : config.frames
 })
 
-const { newValue } = useFps()
+const { newValue, add, remove } = useFps()
 </script>
 
 <template>
@@ -27,14 +27,14 @@ const { newValue } = useFps()
         <div class="flex justify-between items-center">
           {{ item }}
           <div class="delIcon">
-            <close-one theme="outline" size="15" />
+            <close-one theme="outline" size="15" @click="remove(props.type, index)" />
           </div>
         </div>
       </el-option>
     </el-select>
     <div class="flex gap-1 mt-2 items-center">
       <el-input v-model="newValue" :placeholder="props.tip" size="default" clearable></el-input>
-      <el-button color="#0a65cc" size="default">增加</el-button>
+      <el-button color="#0a65cc" size="default" @click="add(props.type)">增加</el-button>
     </div>
   </main>
 </template>
