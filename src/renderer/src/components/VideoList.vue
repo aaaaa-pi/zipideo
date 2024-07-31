@@ -1,20 +1,31 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CloseOne } from '@icon-park/vue-next'
-const videoList = ref([1, 2, 3, 4])
+import VideoItem from '@renderer/components/VideoItem.vue'
+import { VideoType, VideoState } from '@renderer/types'
+const videoList = ref<VideoType[]>([
+  {
+    name: '111',
+    path: 'www.baidu.com',
+    progress: 80,
+    state: VideoState.READY
+  },
+  {
+    name: '222',
+    path: 'www.baidu.com',
+    progress: 60,
+    state: VideoState.READY
+  }
+])
 </script>
 
 <template>
   <main class="main">
     <p>视频列表</p>
     <section class="flex flex-auto flex-col">
-      <span v-if="videoList.length === 0" class="m-auto text-gray-500">暂无数据</span>
-      <div v-for="(video, index) in videoList" :key="index" class="videoItem">
-        {{ video }}
-        <div class="icon">
-          <close-one theme="outline" size="12" />
-        </div>
+      <div v-if="videoList.length">
+        <VideoItem v-for="(item, index) of videoList" :key="index" :video="item" :index="index" />
       </div>
+      <span v-else class="m-auto text-gray-500">暂无压缩视频</span>
     </section>
   </main>
 </template>
@@ -22,13 +33,6 @@ const videoList = ref([1, 2, 3, 4])
 <style lang="scss" scoped>
 .main {
   @apply bg-white overflow-y-auto h-80 rounded-lg mx-2 mb-2 flex flex-col border-dashed border-2 border-blue-500;
-  .videoItem {
-    @apply bg-slate-100 px-3 py-1 rounded-lg mb-2 mx-3 text-xs text-slate-600 flex justify-between items-center;
-
-    .icon {
-      @apply text-slate-500 opacity-50 hover:scale-125 duration-300 hover:text-red-500 hover:opacity-90 cursor-pointer;
-    }
-  }
 }
 p {
   @apply m-2 text-xs text-gray-500;
