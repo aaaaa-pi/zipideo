@@ -3,6 +3,10 @@ import Actions from '@renderer/components/Actions.vue'
 import Frame from '@renderer/components/Frame.vue'
 import Button from '@renderer/components/Button.vue'
 import VideoList from '@renderer/components/VideoList.vue'
+
+const compressVideo = () => {
+  window.api.compress()
+}
 </script>
 
 <template>
@@ -11,5 +15,6 @@ import VideoList from '@renderer/components/VideoList.vue'
     <Actions class="mt-5" />
     <Button class="mt-3" />
     <VideoList class="mt-5" />
+    <el-button @click="compressVideo"></el-button>
   </main>
 </template>
