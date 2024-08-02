@@ -20,6 +20,7 @@ const addFile = (options: UploadRequestOptions) => {
           multiple
           :show-file-list="false"
           drag
+          accept="video/*"
         >
           <inbox-out theme="filled" size="36" fill="#0a65cc" class="inline-block" />
           <p class="text-slate-500 text-sm">点击或拖拽上传文件</p>
