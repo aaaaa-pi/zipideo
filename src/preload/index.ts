@@ -1,10 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { CompressOptions } from '../main/ffmpeg'
 
 // Custom APIs for renderer
 const api = {
-  compress: () => {
-    ipcRenderer.invoke('compress')
+  compress: (options: CompressOptions) => {
+    ipcRenderer.invoke('compress', options)
   }
 }
 

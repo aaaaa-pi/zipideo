@@ -1,6 +1,8 @@
 // 进程通信逻辑
-import { ipcMain } from 'electron'
+import { ipcMain, IpcMainInvokeEvent } from 'electron'
+import { CompressOptions, Ffmpeg } from './ffmpeg'
 
-ipcMain.handle('compress', () => {
-  console.log('111')
+ipcMain.handle('compress', (_event: IpcMainInvokeEvent, options: CompressOptions) => {
+  const ffmpeg = new Ffmpeg(options)
+  ffmpeg.run()
 })

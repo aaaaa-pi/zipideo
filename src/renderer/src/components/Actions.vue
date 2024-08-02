@@ -1,12 +1,29 @@
 <script setup lang="ts">
 import { InboxOut, UpdateRotation } from '@icon-park/vue-next'
+import { UploadRequestOptions } from 'element-plus'
+const addFile = (options: UploadRequestOptions) => {
+  const name = options.file.name
+  const path = options.file.path
+  console.log(name, path)
+}
 </script>
 
 <template>
   <main>
     <section class="flex justify-center items-center gap-4">
       <div class="button ml-2">
-        <inbox-out theme="filled" size="36" fill="#0a65cc" />
+        <el-upload
+          ref="uploadRef"
+          class="flex items-center justify-center"
+          action="#"
+          :http-request="addFile"
+          multiple
+          :show-file-list="false"
+          drag
+        >
+          <inbox-out theme="filled" size="36" fill="#0a65cc" class="inline-block" />
+          <p class="text-slate-500 text-sm">点击或拖拽上传文件</p>
+        </el-upload>
       </div>
       <div class="button mr-2">
         <update-rotation theme="outline" size="36" fill="#0a65cc" />
@@ -18,5 +35,10 @@ import { InboxOut, UpdateRotation } from '@icon-park/vue-next'
 <style lang="scss" scoped>
 .button {
   @apply h-20 rounded-lg bg-white flex justify-center items-center text-slate-600 flex-auto;
+}
+
+:deep(.el-upload-dragger) {
+  border: none;
+  padding: 0;
 }
 </style>
