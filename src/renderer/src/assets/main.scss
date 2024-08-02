@@ -5,3 +5,16 @@ body {
 .multifont {
   font-family: 'Courier Prime', 'Noto Sans SC', sans-serif;
 }
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.nodrag,
+input,
+select,
+textarea,
+option {
+  -webkit-app-region: no-drag;
+}
+
