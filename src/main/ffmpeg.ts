@@ -3,17 +3,12 @@ import ffprobePath from '@ffprobe-installer/ffprobe'
 import ffmpeg from 'fluent-ffmpeg'
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
-
-export type CompressOptions = {
-  file: string
-  fps: number
-  size: string
-}
+import { CompressOptions } from './../renderer/src/types'
 
 export class Ffmpeg {
   ffmpeg: ffmpeg.FfmpegCommand
   constructor(private options: CompressOptions) {
-    this.ffmpeg = ffmpeg(this.options.file)
+    this.ffmpeg = ffmpeg(this.options.file.path)
   }
   progressEvent(progress) {
     console.log('Processing: ' + progress.percent + '% done')

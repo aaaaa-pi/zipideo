@@ -1,6 +1,7 @@
 // 进程通信逻辑
 import { ipcMain, IpcMainInvokeEvent } from 'electron'
-import { CompressOptions, Ffmpeg } from './ffmpeg'
+import { Ffmpeg } from './ffmpeg'
+import { CompressOptions } from './../renderer/src/types'
 import { getDefaultSavePath, openFolder, selectDirectory } from './directory'
 
 ipcMain.handle('compress', (_event: IpcMainInvokeEvent, options: CompressOptions) => {
