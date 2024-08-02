@@ -8,7 +8,7 @@ ipcMain.handle('compress', (_event: IpcMainInvokeEvent, options: CompressOptions
   ffmpeg.run()
 })
 
-ipcMain.handle('getDefaultSavePath', async () => {
+ipcMain.handle('getDefaultSavePath', () => {
   return getDefaultSavePath()
 })
 

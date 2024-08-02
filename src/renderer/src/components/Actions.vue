@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InboxOut, UpdateRotation } from '@icon-park/vue-next'
+import { InboxOut } from '@icon-park/vue-next'
 import { UploadRequestOptions } from 'element-plus'
 const addFile = (options: UploadRequestOptions) => {
   const name = options.file.name
@@ -11,7 +11,7 @@ const addFile = (options: UploadRequestOptions) => {
 <template>
   <main>
     <section class="flex justify-center items-center gap-4">
-      <div class="button ml-2">
+      <div class="button mx-2">
         <el-upload
           ref="uploadRef"
           class="flex items-center justify-center"
@@ -25,9 +25,6 @@ const addFile = (options: UploadRequestOptions) => {
           <inbox-out theme="filled" size="36" fill="#0a65cc" class="inline-block" />
           <p class="text-slate-500 text-sm">点击或拖拽上传文件</p>
         </el-upload>
-      </div>
-      <div class="button mr-2">
-        <update-rotation theme="outline" size="36" fill="#0a65cc" />
       </div>
     </section>
   </main>

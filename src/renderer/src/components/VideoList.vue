@@ -1,21 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import VideoItem from '@renderer/components/VideoItem.vue'
-import { VideoType, VideoState } from '@renderer/types'
-const videoList = ref<VideoType[]>([
-  {
-    name: '111',
-    path: 'www.baidu.com',
-    progress: 80,
-    state: VideoState.READY
-  },
-  {
-    name: '222',
-    path: 'www.baidu.com',
-    progress: 60,
-    state: VideoState.READY
-  }
-])
+import { VideoType } from '@renderer/types'
+const videoList = ref<VideoType[]>([])
 </script>
 
 <template>
