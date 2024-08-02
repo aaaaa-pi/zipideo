@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { InboxOut } from '@icon-park/vue-next'
-import { UploadRequestOptions } from 'element-plus'
-const addFile = (options: UploadRequestOptions) => {
-  const name = options.file.name
-  const path = options.file.path
-  console.log(name, path)
-}
+import useVideo from '@renderer/composables/useVideo'
+
+const { addFile } = useVideo()
 </script>
 
 <template>

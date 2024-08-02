@@ -1,3 +1,4 @@
+import { VideoType } from '@renderer/types'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -7,6 +8,7 @@ export const useConfigStore = defineStore('config', () => {
     size: '1920x1080',
     frames: ['60', '30'],
     frame: 60,
+    files: [] as VideoType[],
     saveFilePath: ''
   })
   const setSaveFilePath = (path: string) => {

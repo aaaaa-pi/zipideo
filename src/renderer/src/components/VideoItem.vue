@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { VideoType } from '@renderer/types'
 import { CloseOne } from '@icon-park/vue-next'
+import useVideo from '@renderer/composables/useVideo'
+const { removeFile } = useVideo()
 
 interface Props {
   video: VideoType
   index: number
 }
 
-const { video } = defineProps<Props>()
+const { video, index } = defineProps<Props>()
 </script>
 
 <template>
@@ -17,7 +19,7 @@ const { video } = defineProps<Props>()
       <div class="title z-10">{{ video.name }}</div>
     </div>
     <div class="icon">
-      <close-one theme="outline" size="12" />
+      <close-one theme="outline" size="12" @click="removeFile(index)" />
     </div>
   </section>
 </template>

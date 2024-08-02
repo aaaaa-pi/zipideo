@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import VideoItem from '@renderer/components/VideoItem.vue'
-import { VideoType } from '@renderer/types'
-const videoList = ref<VideoType[]>([])
+import { useConfigStore } from '@renderer/stores/useConfigStore'
+const { config } = useConfigStore()
 </script>
 
 <template>
   <main class="main">
     <p>视频列表</p>
     <section class="flex flex-auto flex-col">
-      <div v-if="videoList.length">
-        <VideoItem v-for="(item, index) of videoList" :key="index" :video="item" :index="index" />
+      <div v-if="config.files.length">
+        <VideoItem
+          v-for="(item, index) of config.files"
+          :key="index"
+          :video="item"
+          :index="index"
+        />
       </div>
       <span v-else class="m-auto text-gray-500">暂无压缩视频</span>
     </section>
