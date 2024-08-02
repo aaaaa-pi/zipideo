@@ -6,7 +6,10 @@ import { CompressOptions } from '../main/ffmpeg'
 const api = {
   compress: (options: CompressOptions) => {
     ipcRenderer.invoke('compress', options)
-  }
+  },
+  getDefaultSavePath: () => ipcRenderer.invoke('getDefaultSavePath'),
+  openFolder: (path: string) => ipcRenderer.invoke('openFolder', path),
+  selectDirectory: () => ipcRenderer.invoke('selectDirectory')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

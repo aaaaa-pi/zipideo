@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from '@renderer/components/Card.vue'
 import FrameSizeSet from '@renderer/components/FrameSizeSet.vue'
+import SaveFile from '@renderer/components/SaveFile.vue'
 </script>
 
 <template>
@@ -10,6 +11,9 @@ import FrameSizeSet from '@renderer/components/FrameSizeSet.vue'
     </Card>
     <Card title="帧数">
       <FrameSizeSet type="frame" placeholder="帧数列表" tip="请输入'60'格式的值" />
+    </Card>
+    <Card title="视频保存目录">
+      <SaveFile />
     </Card>
   </main>
 </template>

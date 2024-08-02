@@ -6,8 +6,18 @@ export const useConfigStore = defineStore('config', () => {
     sizes: ['1920x1080', '1024x720'],
     size: '1920x1080',
     frames: ['60', '30'],
-    frame: 60
+    frame: 60,
+    saveFilePath: ''
   })
+  const setSaveFilePath = (path: string) => {
+    config.value.saveFilePath = path
+  }
 
-  return { config }
+  const fetchDefaultSavePath = async () => {
+    const path = await window.api.getDefaultSavePath()
+    config.value.saveFilePath = path
+    console.log(config.value.saveFilePath);
+  }
+
+  return { config, fetchDefaultSavePath, setSaveFilePath }
 })
