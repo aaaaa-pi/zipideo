@@ -3,7 +3,6 @@ import Actions from '@renderer/components/Actions.vue'
 import Frame from '@renderer/components/Frame.vue'
 import Button from '@renderer/components/Button.vue'
 import VideoList from '@renderer/components/VideoList.vue'
-
 </script>
 
 <template>

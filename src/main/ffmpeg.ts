@@ -27,6 +27,6 @@ export class Ffmpeg {
       .on('progress', this.progressEvent.bind(this))
       .on('error', this.error.bind(this))
       .on('end', this.end.bind(this))
-      .save('/path/to/file_finish.avi') // 保存的文件路径
+      .save('C:\\Users\\API\\Documents\\zipideo Files\\output.mp4') // 保存的文件路径
   }
 }
