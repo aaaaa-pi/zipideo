@@ -4,14 +4,6 @@ import Frame from '@renderer/components/Frame.vue'
 import Button from '@renderer/components/Button.vue'
 import VideoList from '@renderer/components/VideoList.vue'
 
-// const videoOptions = {
-//   file: '../test',
-//   fps: 30,
-//   size: '1920x720'
-// }
-// const compressVideo = () => {
-//   window.api.compress(videoOptions)
-// }
 </script>
 
 <template>
