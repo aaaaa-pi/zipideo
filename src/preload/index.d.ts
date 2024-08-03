@@ -9,6 +9,7 @@ declare global {
       getDefaultSavePath: () => Promise<string>
       openFolder: (path: string) => Promise<object>
       selectDirectory: () => Promise<string>
+      progressNotice: (callback: (progress: number) => void) => void
     }
   }
 }

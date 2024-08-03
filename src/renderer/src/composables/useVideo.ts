@@ -1,5 +1,5 @@
 import { useConfigStore } from '@renderer/stores/useConfigStore'
-import { VideoState } from '@renderer/types'
+import { VideoState, VideoType } from '@renderer/types'
 import { UploadRequestOptions } from 'element-plus'
 export default () => {
   const { config } = useConfigStore()
@@ -18,5 +18,13 @@ export default () => {
     config.files = []
   }
 
-  return { addFile, removeFile, removeAllFile }
+  const bgColor = (video: VideoType) => {
+    return {
+      [VideoState.COMPRESS]: 'skyblue',
+      [VideoState.ERROR]: '#f3a683',
+      [VideoState.FINISH]: '#55efc4'
+    }[video.state]
+  }
+
+  return { addFile, removeFile, removeAllFile, bgColor }
 }

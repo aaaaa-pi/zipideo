@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { CompressOptions } from './../renderer/src/types'
 
@@ -9,7 +9,12 @@ const api = {
   },
   getDefaultSavePath: () => ipcRenderer.invoke('getDefaultSavePath'),
   openFolder: (path: string) => ipcRenderer.invoke('openFolder', path),
-  selectDirectory: () => ipcRenderer.invoke('selectDirectory')
+  selectDirectory: () => ipcRenderer.invoke('selectDirectory'),
+  progressNotice: (callback: (progress: number) => void) => {
+    ipcRenderer.on('progressNotice', (_event: IpcRendererEvent, progress: number) => {
+      callback(progress)
+    })
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

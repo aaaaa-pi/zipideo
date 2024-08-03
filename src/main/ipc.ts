@@ -4,8 +4,8 @@ import { Ffmpeg } from './ffmpeg'
 import { CompressOptions } from './../renderer/src/types'
 import { getDefaultSavePath, openFolder, selectDirectory } from './directory'
 
-ipcMain.handle('compress', (_event: IpcMainInvokeEvent, options: CompressOptions) => {
-  const ffmpeg = new Ffmpeg(options)
+ipcMain.handle('compress', (event: IpcMainInvokeEvent, options: CompressOptions) => {
+  const ffmpeg = new Ffmpeg(event, options)
   ffmpeg.run()
 })
 
