@@ -2,7 +2,7 @@
 import { VideoType } from '@renderer/types'
 import { CloseOne } from '@icon-park/vue-next'
 import useVideo from '@renderer/composables/useVideo'
-const { removeFile } = useVideo()
+const { removeFile, bgColor } = useVideo()
 
 interface Props {
   video: VideoType
@@ -13,7 +13,10 @@ const { video, index } = defineProps<Props>()
 </script>
 
 <template>
-  <section class="videoItem" :style="`--process:${video.progress}%;--bgColor:skyblue`">
+  <section
+    class="videoItem"
+    :style="`--process:${Math.round(video.progress)}%;--bgColor:${bgColor(video)}`"
+  >
     <div class="progressBgColor"></div>
     <div class="flex items-center gap-1">
       <div class="title z-10">{{ video.name }}</div>
