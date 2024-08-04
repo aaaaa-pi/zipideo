@@ -26,6 +26,14 @@ export const useConfigStore = defineStore(
     return { config, fetchDefaultSavePath, setSaveFilePath }
   },
   {
-    persist: true
+    persist: {
+      paths: [
+        'config.sizes',
+        'config.sizes',
+        'config.frames',
+        'config.frame',
+        'config.saveFilePath'
+      ]
+    }
   }
 )
