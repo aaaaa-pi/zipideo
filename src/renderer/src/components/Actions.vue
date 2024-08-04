@@ -10,7 +10,6 @@ const { addFile } = useVideo()
     <section class="flex justify-center items-center gap-4">
       <div class="button mx-2">
         <el-upload
-          ref="uploadRef"
           class="flex items-center justify-center"
           action="#"
           :http-request="addFile"
