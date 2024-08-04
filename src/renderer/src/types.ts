@@ -1,5 +1,10 @@
 export type DataType = 'size' | 'frame'
 
+export enum MainProcessNoticeType {
+  ERROR = 'error',
+  END = 'end',
+  PROGRESS = 'progress'
+}
 // 视频状态
 export enum VideoState {
   READY = 'ready',

@@ -4,7 +4,7 @@ import ffprobePath from '@ffprobe-installer/ffprobe'
 import ffmpeg from 'fluent-ffmpeg'
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
-import { CompressOptions } from './../renderer/src/types'
+import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
 import { BrowserWindow, IpcMainInvokeEvent } from 'electron'
 
 export class Ffmpeg {
@@ -19,13 +19,24 @@ export class Ffmpeg {
   }
   progressEvent(progress) {
     console.log('Processing: ' + progress.percent + '% done')
-    this.window.webContents.send('progressNotice', progress.percent)
+    this.window.webContents.send(
+      'mainProgressNotice',
+      MainProcessNoticeType.PROGRESS,
+      progress.percent
+    )
   }
   error(err) {
     console.log('An error occurred: ' + err.message)
+    this.window.webContents.send(
+      'mainProgressNotice',
+      MainProcessNoticeType.ERROR,
+      err.message,
+      'end'
+    )
   }
   end() {
     console.log('Processing finished !')
+    this.window.webContents.send('mainProgressNotice', MainProcessNoticeType.END)
   }
   private getSaveFilePath() {
     const info = path.parse(this.options!.file.name)

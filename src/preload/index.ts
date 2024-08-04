@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { CompressOptions } from './../renderer/src/types'
+import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
 
 // Custom APIs for renderer
 const api = {
@@ -10,10 +10,13 @@ const api = {
   getDefaultSavePath: () => ipcRenderer.invoke('getDefaultSavePath'),
   openFolder: (path: string) => ipcRenderer.invoke('openFolder', path),
   selectDirectory: () => ipcRenderer.invoke('selectDirectory'),
-  progressNotice: (callback: (progress: number) => void) => {
-    ipcRenderer.on('progressNotice', (_event: IpcRendererEvent, progress: number) => {
-      callback(progress)
-    })
+  mainProgressNotice: (callback: (type: MainProcessNoticeType, data: number | string) => void) => {
+    ipcRenderer.on(
+      'mainProgressNotice',
+      (_event: IpcRendererEvent, type: MainProcessNoticeType, data: number | string) => {
+        callback(type, data)
+      }
+    )
   }
 }
 
