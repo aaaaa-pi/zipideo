@@ -3,7 +3,7 @@ import Home from '@renderer/view/Home.vue'
 import Setting from '@renderer/view/Setting.vue'
 
 const routes = [
-  { name: 'home', path: '/', component: Home },
+  { name: 'home', path: '/:any(.*)*', component: Home },
   { name: 'setting', path: '/setting', component: Setting }
 ]
 
