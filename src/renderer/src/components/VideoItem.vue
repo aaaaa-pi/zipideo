@@ -19,12 +19,12 @@ const { video, index } = defineProps<Props>()
   >
     <div class="progressBgColor"></div>
     <div class="flex items-center gap-1">
+      <div v-if="video.state === VideoState.COMPRESS" class="progress">
+        {{ `${Math.round(video.progress)}%` }}
+      </div>
       <div class="title z-10">{{ video.name }}</div>
     </div>
-    <div v-if="video.state === VideoState.COMPRESS" class="progress">
-      {{ `${Math.round(video.progress)}%` }}
-    </div>
-    <div v-else class="icon">
+    <div class="icon">
       <close-one theme="outline" size="12" @click="removeFile(index)" />
     </div>
   </section>

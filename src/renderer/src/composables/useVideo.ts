@@ -35,7 +35,8 @@ export default () => {
     return {
       [VideoState.COMPRESS]: 'skyblue',
       [VideoState.ERROR]: '#f3a683',
-      [VideoState.FINISH]: '#55efc4'
+      [VideoState.FINISH]: '#55efc4',
+      [VideoState.STOP]: '#ffaf40'
     }[video.state]
   }
 

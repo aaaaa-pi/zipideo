@@ -51,6 +51,7 @@ export default () => {
           isRun.value = false
           break
         case MainProcessNoticeType.STOP:
+          currentVideo.value!.state = VideoState.STOP
           isRun.value = false
           break
       }
@@ -65,7 +66,7 @@ export default () => {
 
   const compress = () => {
     config.files.forEach((video) => {
-      if (video.state === VideoState.COMPRESS) {
+      if (video.state === VideoState.STOP) {
         video.state = VideoState.READY
       }
     })

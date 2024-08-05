@@ -12,7 +12,8 @@ export enum VideoState {
   READY = 'ready',
   COMPRESS = 'compress',
   ERROR = 'error',
-  FINISH = 'finish'
+  FINISH = 'finish',
+  STOP = 'stop'
 }
 
 export type VideoType = {
