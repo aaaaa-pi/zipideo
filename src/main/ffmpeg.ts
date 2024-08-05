@@ -67,7 +67,7 @@ export class Ffmpeg {
     if (!this.validate()) return
     this.ffmpeg!.videoCodec('libx264')
       .format('mp4')
-      .videoBitrate(this.options!.videoBitrate * 50)
+      .outputOptions('-crf', '23') // 设置 CRF 值为 23
       .size(this.options!.size) // 设置分辨率
       .fps(this.options!.fps) // 设置帧数
       .on('progress', this.progressEvent.bind(this))
