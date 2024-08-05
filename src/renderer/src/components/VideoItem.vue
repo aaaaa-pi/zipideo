@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VideoType } from '@renderer/types'
+import { VideoType, VideoState } from '@renderer/types'
 import { CloseOne } from '@icon-park/vue-next'
 import useVideo from '@renderer/composables/useVideo'
 const { removeFile, bgColor } = useVideo()
@@ -21,7 +21,10 @@ const { video, index } = defineProps<Props>()
     <div class="flex items-center gap-1">
       <div class="title z-10">{{ video.name }}</div>
     </div>
-    <div class="icon">
+    <div v-if="video.state === VideoState.COMPRESS" class="progress">
+      {{ `${Math.round(video.progress)}%` }}
+    </div>
+    <div v-else class="icon">
       <close-one theme="outline" size="12" @click="removeFile(index)" />
     </div>
   </section>
@@ -30,7 +33,9 @@ const { video, index } = defineProps<Props>()
 <style lang="scss" scoped>
 .videoItem {
   @apply relative bg-slate-100 px-3 py-1 rounded-lg mb-2 mx-3 text-xs text-slate-600 flex justify-between items-center;
-
+  .progress {
+    @apply w-[20px] h-[20px] bg-white relative rounded-full text-[10px] flex justify-center items-center text-slate-800 opacity-90 px-4;
+  }
   .progressBgColor {
     @apply absolute top-0 left-0 right-0 bottom-0 z-0 rounded-lg;
     width: var(--process);

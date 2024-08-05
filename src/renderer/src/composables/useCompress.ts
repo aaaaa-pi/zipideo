@@ -33,8 +33,6 @@ export default () => {
   }
   const progressNotice = () => {
     window.api.mainProgressNotice((type: MainProcessNoticeType, data: number | string) => {
-      console.log(type, data)
-
       switch (type) {
         case MainProcessNoticeType.PROGRESS:
           currentVideo.value!.progress = data as number
@@ -45,6 +43,7 @@ export default () => {
           break
         case MainProcessNoticeType.ERROR:
           currentVideo.value!.state = VideoState.ERROR
+          ElMessage.error({ message: data as string, grouping: true })
           break
         case MainProcessNoticeType.DIREDCTORY_CHECK:
           ElMessage.warning({ message: '视频保存目录不存在', grouping: true })
@@ -52,7 +51,6 @@ export default () => {
           isRun.value = false
           break
         case MainProcessNoticeType.STOP:
-          currentVideo.value!.state = VideoState.READY
           isRun.value = false
           break
       }

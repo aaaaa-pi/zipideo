@@ -30,7 +30,9 @@ export class Ffmpeg {
   }
   error(err) {
     console.log('An error occurred: ' + err.message)
-    this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.ERROR, err.message)
+    if (err.message !== 'ffmpeg was killed with signal SIGKILL') {
+      this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.ERROR, err.message)
+    }
   }
   end() {
     console.log('Processing finished !')
@@ -56,7 +58,7 @@ export class Ffmpeg {
       this.ffmpeg!.kill('SIGKILL')
       this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.STOP)
     } catch (err) {
-      this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.ERROR)
+      this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.ERROR, err)
     }
   }
   run() {
