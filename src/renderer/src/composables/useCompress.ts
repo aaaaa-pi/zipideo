@@ -2,9 +2,8 @@ import { useConfigStore } from '@renderer/stores/useConfigStore'
 import { ElMessage } from 'element-plus'
 import { VideoType, VideoState, MainProcessNoticeType } from '@renderer/types'
 import { ref, toRefs } from 'vue'
-
+const isRun = ref<boolean>(false)
 export default () => {
-  const isRun = ref<boolean>(false)
   const { config } = useConfigStore()
   const currentVideo = ref<VideoType>()
   const { saveFilePath } = toRefs(config)

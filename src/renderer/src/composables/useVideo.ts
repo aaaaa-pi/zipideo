@@ -1,6 +1,7 @@
 import { useConfigStore } from '@renderer/stores/useConfigStore'
 import { VideoState, VideoType } from '@renderer/types'
-import { UploadRequestOptions } from 'element-plus'
+import { UploadRequestOptions, ElMessage } from 'element-plus'
+
 export default () => {
   const { config } = useConfigStore()
 
@@ -11,7 +12,12 @@ export default () => {
   }
 
   const removeFile = (index: number) => {
-    config.files.splice(index, 1)
+    const video = config.files[index]
+    if (video.state === VideoState.COMPRESS) {
+      ElMessage.warning({ message: '请等待视频压缩完成', grouping: true })
+    } else {
+      config.files.splice(index, 1)
+    }
   }
 
   const removeAllFile = () => {

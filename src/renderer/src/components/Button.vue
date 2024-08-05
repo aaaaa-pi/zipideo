@@ -24,7 +24,11 @@ const stop = () => {
       >开始转码</el-button
     >
     <el-button color="#0a65cc" size="small" @click="stop">停止转码</el-button>
-    <el-button color="#ff3838" size="small" @click="removeAllFile">清空全部</el-button>
-    <el-button color="#8e44ad" size="small" @click="resetAllVideo">重置视频</el-button>
+    <el-button color="#ff3838" size="small" :disabled="isRun" @click="removeAllFile"
+      >清空全部</el-button
+    >
+    <el-button color="#8e44ad" size="small" :disabled="isRun" @click="resetAllVideo"
+      >重置视频</el-button
+    >
   </main>
 </template>
