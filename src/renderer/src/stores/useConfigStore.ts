@@ -10,6 +10,7 @@ export const useConfigStore = defineStore(
       size: '1920x1080',
       frames: ['60', '30'],
       frame: '60',
+      videoBitrate: 30,
       files: [] as VideoType[],
       saveFilePath: ''
     })

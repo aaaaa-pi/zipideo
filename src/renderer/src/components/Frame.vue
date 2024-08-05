@@ -29,6 +29,10 @@ const { config } = useConfigStore()
         </el-select>
       </div>
     </section>
+    <section class="mt-4 px-2">
+      <p>码率</p>
+      <el-slider v-model="config.videoBitrate" />
+    </section>
   </main>
 </template>
 
