@@ -18,6 +18,13 @@ export default () => {
     config.files = []
   }
 
+  const resetAllVideo = () => {
+    config.files.forEach((item) => {
+      item.progress = 0
+      item.state = VideoState.READY
+    })
+  }
+
   const bgColor = (video: VideoType) => {
     return {
       [VideoState.COMPRESS]: 'skyblue',
@@ -26,5 +33,5 @@ export default () => {
     }[video.state]
   }
 
-  return { addFile, removeFile, removeAllFile, bgColor }
+  return { addFile, removeFile, removeAllFile, bgColor, resetAllVideo }
 }
