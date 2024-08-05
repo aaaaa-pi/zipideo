@@ -7,6 +7,8 @@ ffmpeg.setFfprobePath(ffprobePath.path)
 import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
 import { BrowserWindow } from 'electron'
 import { existsSync, renameSync } from 'fs'
+ffmpeg.setFfmpegPath(ffmpegPath.path.replace('app.asar', 'app.asar.unpacked'))
+ffmpeg.setFfprobePath(ffprobePath.path.replace('app.asar', 'app.asar.unpacked'))
 
 export class Ffmpeg {
   constructor(
