@@ -4,6 +4,7 @@ import { VideoType, VideoState, MainProcessNoticeType } from '@renderer/types'
 import { ref, toRefs } from 'vue'
 
 export default () => {
+  const isRun = ref<boolean>(false)
   const { config } = useConfigStore()
   const currentVideo = ref<VideoType>()
   const { saveFilePath } = toRefs(config)
@@ -15,7 +16,7 @@ export default () => {
     if (config.files.length === 0) {
       messageText = '请选择视频文件'
     }
-    if (!currentVideo.value) {
+    if (!currentVideo.value && config.files.length != 0) {
       messageText = '视频压缩完毕'
     }
     if (messageText) {
@@ -25,7 +26,11 @@ export default () => {
   }
   const getCompressFile = () => {
     currentVideo.value = config.files.find((video) => video.state == VideoState.READY)
-    if (currentVideo.value) currentVideo.value.state = VideoState.COMPRESS
+    if (currentVideo.value) {
+      currentVideo.value.state = VideoState.COMPRESS
+    } else {
+      isRun.value = false
+    }
   }
   const progressNotice = () => {
     window.api.mainProgressNotice((type: MainProcessNoticeType, data: number | string) => {
@@ -40,8 +45,19 @@ export default () => {
         case MainProcessNoticeType.ERROR:
           currentVideo.value!.state = VideoState.FINISH
           break
+        case MainProcessNoticeType.DIREDCTORY_CHECK:
+          ElMessage.warning({ message: '视频保存目录不存在', grouping: true })
+          currentVideo.value!.state = VideoState.READY
+          isRun.value = false
+          break
       }
     })
+  }
+
+  const run = () => {
+    if (isRun.value) return
+    isRun.value = true
+    compress()
   }
 
   const compress = () => {
@@ -50,7 +66,6 @@ export default () => {
         video.state = VideoState.READY
       }
     })
-    progressNotice()
     getCompressFile()
     if (validate() === false) return
     window.api.compress({
@@ -61,5 +76,5 @@ export default () => {
     })
   }
 
-  return { compress }
+  return { run, isRun, progressNotice }
 }

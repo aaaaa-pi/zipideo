@@ -3,7 +3,8 @@ export type DataType = 'size' | 'frame'
 export enum MainProcessNoticeType {
   ERROR = 'error',
   END = 'end',
-  PROGRESS = 'progress'
+  PROGRESS = 'progress',
+  DIREDCTORY_CHECK = 'diredctory_check'
 }
 // 视频状态
 export enum VideoState {

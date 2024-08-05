@@ -6,6 +6,7 @@ ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
 import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
 import { BrowserWindow, IpcMainInvokeEvent } from 'electron'
+import { existsSync } from 'fs'
 
 export class Ffmpeg {
   ffmpeg: ffmpeg.FfmpegCommand
@@ -42,7 +43,15 @@ export class Ffmpeg {
     const info = path.parse(this.options!.file.name)
     return path.join(this.options!.saveDirectory, `${info.name}${info.ext}`)
   }
+  private validate() {
+    if (!existsSync(this.options!.saveDirectory)) {
+      this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.DIREDCTORY_CHECK)
+      return false
+    }
+    return true
+  }
   run() {
+    if (!this.validate()) return
     this.ffmpeg
       .videoCodec('libx264')
       .size(this.options.size) // 设置分辨率
