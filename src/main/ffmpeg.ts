@@ -6,7 +6,7 @@ ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
 import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
 import { BrowserWindow } from 'electron'
-import { existsSync } from 'fs'
+import { existsSync, renameSync } from 'fs'
 
 export class Ffmpeg {
   constructor(
@@ -34,11 +34,15 @@ export class Ffmpeg {
   }
   end() {
     console.log('Processing finished !')
+    renameSync(this.tempFile(), this.getSaveFilePath())
     this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.END, 'end')
   }
   private getSaveFilePath() {
     const info = path.parse(this.options!.file.name)
     return path.join(this.options!.saveDirectory, `${info.name}${info.ext}`)
+  }
+  private tempFile() {
+    return path.join(this.options!.saveDirectory, `.temp`)
   }
   private validate() {
     if (!existsSync(this.options!.saveDirectory)) {
@@ -58,11 +62,12 @@ export class Ffmpeg {
   run() {
     if (!this.validate()) return
     this.ffmpeg!.videoCodec('libx264')
+      .format('mp4')
       .size(this.options!.size) // 设置分辨率
       .fps(this.options!.fps) // 设置帧数
       .on('progress', this.progressEvent.bind(this))
       .on('error', this.error.bind(this))
       .on('end', this.end.bind(this))
-      .save(this.getSaveFilePath()) // 保存的文件路径
+      .save(this.tempFile()) // 保存的文件路径
   }
 }
