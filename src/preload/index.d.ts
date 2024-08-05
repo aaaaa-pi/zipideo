@@ -6,6 +6,7 @@ declare global {
     electron: ElectronAPI
     api: {
       compress: (options: CompressOptions) => void
+      stop: () => void
       getDefaultSavePath: () => Promise<string>
       openFolder: (path: string) => Promise<object>
       selectDirectory: () => Promise<string>

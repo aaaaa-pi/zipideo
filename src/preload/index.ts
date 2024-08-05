@@ -7,6 +7,9 @@ const api = {
   compress: (options: CompressOptions) => {
     ipcRenderer.invoke('compress', options)
   },
+  stop: () => {
+    ipcRenderer.send('stop')
+  },
   getDefaultSavePath: () => ipcRenderer.invoke('getDefaultSavePath'),
   openFolder: (path: string) => ipcRenderer.invoke('openFolder', path),
   selectDirectory: () => ipcRenderer.invoke('selectDirectory'),

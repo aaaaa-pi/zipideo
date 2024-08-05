@@ -5,22 +5,24 @@ import ffmpeg from 'fluent-ffmpeg'
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
 import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
-import { BrowserWindow, IpcMainInvokeEvent } from 'electron'
+import { BrowserWindow } from 'electron'
 import { existsSync } from 'fs'
 
 export class Ffmpeg {
-  ffmpeg: ffmpeg.FfmpegCommand
-  window: BrowserWindow
   constructor(
-    private event: IpcMainInvokeEvent,
-    private options: CompressOptions
-  ) {
+    private window?: BrowserWindow,
+    private options?: CompressOptions,
+    private ffmpeg?: ffmpeg.FfmpegCommand
+  ) {}
+  init(win: BrowserWindow, options: CompressOptions) {
+    this.window = win
+    this.options = options
     this.ffmpeg = ffmpeg(this.options.file.path)
-    this.window = BrowserWindow.fromWebContents(this.event.sender)!
+    return this
   }
   progressEvent(progress) {
     console.log('Processing: ' + progress.percent + '% done')
-    this.window.webContents.send(
+    this.window!.webContents.send(
       'mainProgressNotice',
       MainProcessNoticeType.PROGRESS,
       progress.percent
@@ -28,16 +30,11 @@ export class Ffmpeg {
   }
   error(err) {
     console.log('An error occurred: ' + err.message)
-    this.window.webContents.send(
-      'mainProgressNotice',
-      MainProcessNoticeType.ERROR,
-      err.message,
-      'end'
-    )
+    this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.ERROR, err.message)
   }
   end() {
     console.log('Processing finished !')
-    this.window.webContents.send('mainProgressNotice', MainProcessNoticeType.END)
+    this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.END, 'end')
   }
   private getSaveFilePath() {
     const info = path.parse(this.options!.file.name)
@@ -50,12 +47,19 @@ export class Ffmpeg {
     }
     return true
   }
+  stop() {
+    try {
+      this.ffmpeg!.kill('SIGKILL')
+      this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.STOP)
+    } catch (err) {
+      this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.ERROR)
+    }
+  }
   run() {
     if (!this.validate()) return
-    this.ffmpeg
-      .videoCodec('libx264')
-      .size(this.options.size) // 设置分辨率
-      .fps(this.options.fps) // 设置帧数
+    this.ffmpeg!.videoCodec('libx264')
+      .size(this.options!.size) // 设置分辨率
+      .fps(this.options!.fps) // 设置帧数
       .on('progress', this.progressEvent.bind(this))
       .on('error', this.error.bind(this))
       .on('end', this.end.bind(this))
