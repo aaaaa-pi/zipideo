@@ -16,9 +16,10 @@
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:linux": "npm run build && electron-builder --linux"
+    "build:win": "npm run build && electron-builder --win --config --publish never",
+    "build:mac-x86": "npm run build && electron-builder --mac --config --publish never",
+    "build:mac-arm64": "npm run build && electron-builder --arm64 --mac --config --publish never",
+    "build:linux": "npm run build && electron-builder --linux --config --publish never"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
