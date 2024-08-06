@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "视频压缩电脑桌面端软件",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "aaaaa-pi",
+  "homepage": "https://github.com/aaaaa-pi/zipideo",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
