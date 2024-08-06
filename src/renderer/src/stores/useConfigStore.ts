@@ -12,7 +12,9 @@ export const useConfigStore = defineStore(
       frame: '60',
       videoBitrate: 30,
       files: [] as VideoType[],
-      saveFilePath: ''
+      saveFilePath: '',
+      startForCheck: false,
+      version: ''
     })
     const setSaveFilePath = (path: string) => {
       config.value.saveFilePath = path
@@ -21,10 +23,18 @@ export const useConfigStore = defineStore(
     const fetchDefaultSavePath = async () => {
       const path = await window.api.getDefaultSavePath()
       config.value.saveFilePath = path
-      console.log(config.value.saveFilePath)
     }
 
-    return { config, fetchDefaultSavePath, setSaveFilePath }
+    const getCurrentVersion = async () => {
+      const version = await window.api.getCurrentVersion()
+      config.value.version = version
+    }
+
+    const startForCheckUpdate = () => {
+      window.api.startForCheckUpdate()
+    }
+
+    return { config, fetchDefaultSavePath, setSaveFilePath, startForCheckUpdate, getCurrentVersion }
   },
   {
     persist: {
@@ -33,7 +43,8 @@ export const useConfigStore = defineStore(
         'config.sizes',
         'config.frames',
         'config.frame',
-        'config.saveFilePath'
+        'config.saveFilePath',
+        'config.version'
       ]
     }
   }

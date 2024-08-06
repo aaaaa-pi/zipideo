@@ -24,7 +24,7 @@ importers:
         specifier: ^1.4.2
         version: 1.4.2(vue@3.4.34(typescript@5.5.4))
       electron-updater:
-        specifier: ^6.1.7
+        specifier: ^6.2.1
         version: 6.2.1
       element-plus:
         specifier: ^2.7.8

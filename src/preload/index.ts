@@ -20,7 +20,10 @@ const api = {
         callback(type, data)
       }
     )
-  }
+  },
+  startForCheckUpdate: () => ipcRenderer.send('startForCheckUpdate'),
+  CheckForUpdates: () => ipcRenderer.send('CheckForUpdates'),
+  getCurrentVersion: () => ipcRenderer.invoke('currentVersion')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

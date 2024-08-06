@@ -6,12 +6,15 @@ import VideoList from '@renderer/components/VideoList.vue'
 import { onMounted } from 'vue'
 import { useConfigStore } from '@renderer/stores/useConfigStore'
 
-const { config, fetchDefaultSavePath } = useConfigStore()
-
+const { config, fetchDefaultSavePath, startForCheckUpdate, getCurrentVersion } = useConfigStore()
 onMounted(async () => {
   if (!config.saveFilePath) {
     await fetchDefaultSavePath()
   }
+  if (config.startForCheck) {
+    startForCheckUpdate()
+  }
+  getCurrentVersion()
 })
 </script>
 

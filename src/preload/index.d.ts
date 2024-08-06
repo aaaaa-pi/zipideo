@@ -13,6 +13,9 @@ declare global {
       mainProgressNotice: (
         callback: (type: MainProcessNoticeType, data: number | string) => void
       ) => void
+      startForCheckUpdate: () => void
+      CheckForUpdates: () => void
+      getCurrentVersion: () => Promise<string>
     }
   }
 }

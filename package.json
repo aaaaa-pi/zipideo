@@ -1,10 +1,11 @@
 {
   "name": "zipideo",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "视频压缩电脑桌面端软件",
   "main": "./out/main/index.js",
   "author": "aaaaa-pi",
   "homepage": "https://github.com/aaaaa-pi/zipideo",
+  "repository": "https://github.com/aaaaa-pi/zipideo",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
@@ -28,7 +29,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@icon-park/vue-next": "^1.4.2",
-    "electron-updater": "^6.1.7",
+    "electron-updater": "^6.2.1",
     "element-plus": "^2.7.8",
     "fluent-ffmpeg": "^2.1.3",
     "pinia": "^2.2.0",
