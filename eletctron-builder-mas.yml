@@ -11,6 +11,7 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+afterSign: build/notarize.js
 win:
   executableName: zipideo
 nsis:
@@ -19,13 +20,25 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  # 最低系统版本，下面指生成arm，因为最低版本是12
+  # minimumSystemVersion: 12
   entitlementsInherit: build/entitlements.mac.plist
+  icon: build/icon.icns
+  target:
+    - mas
   extendInfo:
     - NSDocumentsFolderUsageDescription: 应用程序请求访问用户的文档文件夹,用于设置视频压缩后的保存路径。
     - NSDownloadsFolderUsageDescription: 应用程序需要访问用户下载文件夹中的文件。
-  notarize: false
+mas:
+  hardenedRuntime: false
+  type: distribution
+  category: public.app-category.utilities
+  entitlements: build/entitlements.mas.plist
+  entitlementsInherit: build/entitlements.mas.inherit.plist
+  provisioningProfile: build/camera.provisionprofile
 dmg:
   artifactName: ${name}-${version}.${ext}
+  sign: false
 linux:
   target:
     - AppImage
@@ -39,5 +52,3 @@ npmRebuild: false
 publish:
   provider: generic
   url: https://example.com/auto-updates
-electronDownload:
-  mirror: https://npmmirror.com/mirrors/electron/
