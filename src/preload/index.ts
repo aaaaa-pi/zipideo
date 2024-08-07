@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { CompressOptions, MainProcessNoticeType } from './../renderer/src/types'
+import { CompressOptions, MainProcessNoticeType, UpdateProgressType } from './../renderer/src/types'
 
 // Custom APIs for renderer
 const api = {
@@ -23,7 +23,11 @@ const api = {
   },
   startForCheckUpdate: () => ipcRenderer.send('startForCheckUpdate'),
   CheckForUpdates: () => ipcRenderer.send('CheckForUpdates'),
-  getCurrentVersion: () => ipcRenderer.invoke('currentVersion')
+  getCurrentVersion: () => ipcRenderer.invoke('currentVersion'),
+  getUpdateProgress: (callback: (_event: IpcRendererEvent, info: UpdateProgressType) => void) =>
+    ipcRenderer.on('downloadProgress', callback),
+  updateDownloaded: (callback: (_event: IpcRendererEvent) => void) =>
+    ipcRenderer.on('downloaded', callback)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

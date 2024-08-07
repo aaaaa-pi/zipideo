@@ -16,6 +16,10 @@ declare global {
       startForCheckUpdate: () => void
       CheckForUpdates: () => void
       getCurrentVersion: () => Promise<string>
+      getUpdateProgress: (
+        callback: (_event: IpcRendererEvent, info: UpdateProgressType) => void
+      ) => void
+      updateDownloaded: (callback: (_event: IpcRendererEvent) => void) => void
     }
   }
 }

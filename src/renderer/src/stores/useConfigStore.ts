@@ -1,4 +1,4 @@
-import { VideoType } from '@renderer/types'
+import { VideoType, UpdateProgressType } from '@renderer/types'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -14,7 +14,11 @@ export const useConfigStore = defineStore(
       files: [] as VideoType[],
       saveFilePath: '',
       startForCheck: false,
-      version: ''
+      version: '',
+      updateInfo: {
+        speed: 0,
+        percent: 0
+      } as UpdateProgressType
     })
     const setSaveFilePath = (path: string) => {
       config.value.saveFilePath = path
@@ -34,7 +38,26 @@ export const useConfigStore = defineStore(
       window.api.startForCheckUpdate()
     }
 
-    return { config, fetchDefaultSavePath, setSaveFilePath, startForCheckUpdate, getCurrentVersion }
+    const getUpdateProgress = () => {
+      window.api.getUpdateProgress((_event, info: UpdateProgressType) => {
+        config.value.updateInfo = info
+      })
+      window.api.updateDownloaded(() => {
+        config.value.updateInfo = {
+          speed: 0,
+          percent: 0
+        }
+      })
+    }
+
+    return {
+      config,
+      fetchDefaultSavePath,
+      setSaveFilePath,
+      startForCheckUpdate,
+      getCurrentVersion,
+      getUpdateProgress
+    }
   },
   {
     persist: {

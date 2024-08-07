@@ -41,6 +41,13 @@ export default (win: BrowserWindow) => {
         }
       })
   })
+  // 监听下载进度
+  autoUpdater.on('download-progress', (prog) => {
+    win.webContents.send('downloadProgress', {
+      speed: Math.ceil(prog.bytesPerSecond / 1000), // 网速
+      percent: Math.ceil(prog.percent) // 百分比
+    })
+  })
 
   // 没有新版本时
   autoUpdater.on('update-not-available', (info) => {
@@ -53,6 +60,7 @@ export default (win: BrowserWindow) => {
 
   // 更新下载完毕
   autoUpdater.on('update-downloaded', () => {
+    win.webContents.send('downloaded')
     dialog
       .showMessageBox({
         type: 'info',
@@ -86,11 +94,6 @@ export default (win: BrowserWindow) => {
           shell.openExternal('https://github.com/aaaaa-pi/zipideo/releases')
         }
       })
-  })
-
-  // 监听下载进度
-  autoUpdater.on('download-progress', (progress) => {
-    win.webContents.send('downloadProgress', progress)
   })
 
   // 监听来自渲染进程的手动检查更新请求

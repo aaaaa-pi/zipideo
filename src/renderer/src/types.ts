@@ -30,3 +30,8 @@ export type CompressOptions = {
   videoBitrate: number
   saveDirectory: string
 }
+
+export type UpdateProgressType = {
+  speed: number
+  percent: number
+}
