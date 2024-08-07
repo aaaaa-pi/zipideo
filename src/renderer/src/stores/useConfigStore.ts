@@ -67,7 +67,8 @@ export const useConfigStore = defineStore(
         'config.frames',
         'config.frame',
         'config.saveFilePath',
-        'config.version'
+        'config.version',
+        'config.startForCheck'
       ]
     }
   }
