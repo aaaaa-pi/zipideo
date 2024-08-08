@@ -1,7 +1,7 @@
 # 视频压缩电脑桌面端软件
 <p align="center">
   <br>
-  <h2>zipideo</h2>
+  <h2 align="center">zipideo</h2>
   <br>
 </p>
   <p align="center">
@@ -13,7 +13,7 @@
     <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/aaaaa-pi/zipideo" />
     <img alt="" src="https://img.shields.io/github/repo-size/aaaaa-pi/zipideo" />
     <img alt="GitHub Issues" src="https://img.shields.io/github/issues/aaaaa-pi/zipideo" />
-    <img alt="AutoDeploy" src="https://github.com/aaaaa-pi/zipideo/actions/workflows/auto_deploy.yml/badge.svg" />
+    <img alt="build" src="https://github.com/aaaaa-pi/zipideo/actions/workflows/build.yml/badge.svg" />
   </p>
 
 ### 📫 功能介绍
