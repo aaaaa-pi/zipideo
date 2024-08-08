@@ -39,7 +39,7 @@ export const useConfigStore = defineStore(
     }
 
     const getUpdateProgress = () => {
-      window.api.getUpdateProgress((_event, info: UpdateProgressType) => {
+      window.api.getUpdateProgress((info: UpdateProgressType) => {
         config.value.updateInfo = info
       })
       window.api.updateDownloaded(() => {
