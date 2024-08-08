@@ -10,7 +10,7 @@ const { addFile } = useVideo()
     <section class="flex justify-center items-center gap-4">
       <div class="button mx-2">
         <el-upload
-          class="flex items-center justify-center"
+          class="w-full h-full"
           action="#"
           :http-request="addFile"
           multiple
@@ -18,8 +18,10 @@ const { addFile } = useVideo()
           drag
           accept="video/*"
         >
-          <inbox-out theme="filled" size="36" fill="#0a65cc" class="inline-block" />
-          <p class="text-slate-500 text-sm">点击或拖拽上传文件</p>
+          <div class="flex flex-col items-center justify-center w-full h-full">
+            <inbox-out theme="filled" size="36" fill="#0a65cc" class="inline-block" />
+            <p class="text-slate-500 text-sm">点击或拖拽上传文件</p>
+          </div>
         </el-upload>
       </div>
     </section>
@@ -31,7 +33,12 @@ const { addFile } = useVideo()
   @apply h-20 rounded-lg bg-white flex justify-center items-center text-slate-600 flex-auto;
 }
 
+:deep(.el-upload) {
+  @apply w-full h-full;
+}
+
 :deep(.el-upload-dragger) {
+  @apply w-full h-full flex flex-col justify-center items-center;
   border: none;
   padding: 0;
 }
