@@ -85,7 +85,6 @@ export default (win: BrowserWindow) => {
         title: '更新错误',
         message: '软件更新过程中发生错误',
         detail: error ? error.toString() : '',
-        // detail: error ? 'github自动更新需要设置个人github的token，所以请手动进行下载' : '',
         buttons: ['网站下载', '取消更新'],
         cancelId: 1
       })
