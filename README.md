@@ -1,7 +1,9 @@
 # 视频压缩电脑桌面端软件
 <p align="center">
   <br>
-  <p align="center" size=8>zipideo</p>
+  <center>
+    <font size=8>zipideo</font>
+  </center>
   <br>
 </p>
   <p align="center">
