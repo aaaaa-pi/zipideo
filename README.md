@@ -1,11 +1,4 @@
-# 视频压缩电脑桌面端软件
-<p align="center">
-  <br>
-  <center>
-    <font size=8>zipideo</font>
-  </center>
-  <br>
-</p>
+# 视频压缩电脑桌面端软件 —— zipideo
   <p align="center">
     <a href="#">调试</a> •
     <a href="#">构建</a>
