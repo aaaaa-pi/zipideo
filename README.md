@@ -1,7 +1,7 @@
 # 视频压缩电脑桌面端软件
 <p align="center">
   <br>
-  <h2 align="center">zipideo</h2>
+  <p align="center" style="font-size: 2em; font-weight: bold;">zipideo</p>
   <br>
 </p>
   <p align="center">
@@ -34,11 +34,14 @@
 <img src="./resources/doc/1.png" />
 <img src="./resources/doc/2.png" />
 
+---
 
 ### 🏅 软件下载
 你可以从 [Github](https://github.com/aaaaa-pi/zipideo/releases)  下载软件。
 <br>
 你也可以 clone 项目后，在本地根据自行编译软件使用，请进入项目根目录执行以下命令，或者在项目的 package.json 文件中看到更多命令。
+
+---
 
 ### 🛠 开发与调试
 ```bash
