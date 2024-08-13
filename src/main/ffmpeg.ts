@@ -43,6 +43,7 @@ export class Ffmpeg {
   }
   private getSaveFilePath() {
     const info = path.parse(this.options!.file.name)
+    console.log(info)
     return path.join(this.options!.saveDirectory, `${info.name}${info.ext}`)
   }
   private tempFile() {
@@ -64,6 +65,7 @@ export class Ffmpeg {
     }
   }
   run() {
+    this.getSaveFilePath()
     if (!this.validate()) return
     this.ffmpeg!.videoCodec('libx264')
       .format('mp4')

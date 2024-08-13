@@ -3,6 +3,7 @@ import Card from '@renderer/components/Card.vue'
 import FrameSizeSet from '@renderer/components/FrameSizeSet.vue'
 import SaveFile from '@renderer/components/SaveFile.vue'
 import About from '@renderer/components/About.vue'
+import FileNameSet from '@renderer/components/FileNameSet.vue'
 </script>
 
 <template>
@@ -15,6 +16,9 @@ import About from '@renderer/components/About.vue'
     </Card>
     <Card title="视频保存目录">
       <SaveFile />
+    </Card>
+    <Card title="文件命名格式">
+      <FileNameSet />
     </Card>
     <Card title="关于zipvideo">
       <About />
