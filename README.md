@@ -29,8 +29,6 @@
 <img src="./resources/doc/1.png" />
 <img src="./resources/doc/2.png" />
 
-![在这里插入图片描述](./resources/doc/3.gif)
-
 ---
 
 ### 🏅 软件下载
