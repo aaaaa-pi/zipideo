@@ -1,6 +1,6 @@
 {
   "name": "zipideo",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "视频压缩电脑桌面端软件",
   "main": "./out/main/index.js",
   "author": "aaaaa-pi",
