@@ -27,7 +27,9 @@ const api = {
   getUpdateProgress: (callback: (_event: IpcRendererEvent, info: UpdateProgressType) => void) =>
     ipcRenderer.on('downloadProgress', callback),
   updateDownloaded: (callback: (_event: IpcRendererEvent) => void) =>
-    ipcRenderer.on('downloaded', callback)
+    ipcRenderer.on('downloaded', callback),
+  generateFFmpegCommand: (prompt: string, filename: string) =>
+    ipcRenderer.invoke('generateFFmpegCommand', prompt, filename)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -20,6 +20,14 @@ declare global {
         callback: (_event: IpcRendererEvent, info: UpdateProgressType) => void
       ) => void
       updateDownloaded: (callback: (_event: IpcRendererEvent) => void) => void
+      generateFFmpegCommand: (prompt: string, filename: string) => Promise<{
+        success: boolean
+        data?: {
+          command: string
+          description: string
+        }
+        error?: string
+      }>
     }
   }
 }
