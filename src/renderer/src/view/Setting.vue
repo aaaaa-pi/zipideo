@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Card from '@renderer/components/Card.vue'
+import Card from '@renderer/components/BatchProcess/Card.vue'
 import FrameSizeSet from '@renderer/components/FrameSizeSet.vue'
 import SaveFile from '@renderer/components/SaveFile.vue'
-import About from '@renderer/components/About.vue'
+import About from '@renderer/components/BatchProcess/About.vue'
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { VideoPlay, Close, Refresh } from '@element-plus/icons-vue'
+import { Refresh } from '@element-plus/icons-vue'
+import { VideoTwo, CloseOne } from '@icon-park/vue-next'
 import useVideoProcessing from '@renderer/composables/useAIVideoProcessing'
 import useAICommand from '@renderer/composables/useAICommand'
 
@@ -66,40 +67,34 @@ const handleClose = () => {
 </script>
 
 <template>
-  <div class="w-full space-y-6 font-mono">
+  <div class="w-full space-y-2 font-mono">
     <!-- 当前视频信息 -->
-    <div class="flex items-center justify-between bg-white p-4 rounded-lg">
+    <div class="flex items-center justify-between bg-white p-4 rounded-lg border-2 border-[#2a2a2a]">
       <div class="flex items-center space-x-2">
-        <el-icon class="h-5 w-5 text-blue-600">
-          <VideoPlay />
-        </el-icon>
+        <video-two theme="outline" size="36" fill="#0a65cc"/>
         <div>
-          <h2 class="text-base">当前视频</h2>
+          <label class="block">当前视频</label>
           <p class="text-sm text-gray-600">{{ videoFile.name }}</p>
           <p class="text-sm text-gray-500">
             {{ (videoFile.size / (1024 * 1024)).toFixed(2) }} MB
           </p>
         </div>
       </div>
-      <el-icon
-        @click="handleClose"
-        class="cursor-pointer text-gray-400 hover:text-gray-600"
-        :class="{ 'cursor-not-allowed': isProcessing || isGenerating }"
-      >
-        <Close />
-      </el-icon>
+      <div class="delIcon">
+        <close-one theme="outline" size="15" @click="handleClose" :class="{ 'cursor-not-allowed': isProcessing || isGenerating }"/>
+      </div>
     </div>
 
     <!-- 输入区域 -->
-    <div class="space-y-4">
+    <div class="space-y-6">
       <div class="space-y-2">
-        <label class="block text-base">处理需求描述</label>
+        <label class="block">处理需求描述</label>
         <el-input
           v-model="prompt"
           type="textarea"
           :rows="3"
           placeholder="例如：将视频转换为黑白效果"
-          class="w-full rounded-lg"
+          class="w-full rounded-lg border-2 border-[#2a2a2a]"
         />
       </div>
 
@@ -170,7 +165,7 @@ const handleClose = () => {
       <div v-if="progress > 0" class="space-y-2 border-2 border-[#2a2a2a] bg-white p-4 rounded-lg">
         <div class="flex justify-between text-sm text-blue-600 font-bold">
           <span>处理进度</span>
-          <span>{{ progress }}%</span>
+          <span>{{ `${Math.round(progress)}%` }} </span>
         </div>
         <el-progress
           :percentage="progress"
@@ -199,3 +194,10 @@ const handleClose = () => {
     </div>
   </div>
 </template>
+
+
+<style lang="scss" scoped>
+.delIcon {
+  @apply text-slate-300 hover:text-red-500 hover:scale-125 cursor-pointer duration-300;
+}
+</style>

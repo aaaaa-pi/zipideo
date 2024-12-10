@@ -18,3 +18,32 @@ option {
   -webkit-app-region: no-drag;
 }
 
+/* 隐藏默认滚动条 */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+/* 自定义滚动条容器 */
+.custom-scrollbar {
+  &:hover {
+    &::-webkit-scrollbar {
+      display: block;
+      width: 10px;
+      height: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #2a2a2a;
+      border-radius: 1px;
+    }
+  }
+}
+

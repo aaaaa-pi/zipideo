@@ -16,9 +16,16 @@ onMounted(() => {
   <div class="h-screen flex flex-col">
     <Navbar />
     <UpdateInfo v-if="config.updateInfo.percent !== 0" class="absolute w-full z-10" />
-    <main class="flex-1 overflow-auto">
+    <main class="flex-1 overflow-auto custom-scrollbar">
       <router-view></router-view>
     </main>
     <Copyright class="mt-3 mb-3" />
   </div>
 </template>
+
+<style>
+/* 确保全局样式生效 */
+:root {
+  overflow: hidden;
+}
+</style>

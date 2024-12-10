@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Actions from '@renderer/components/Actions.vue'
+import Actions from '@renderer/components/BatchProcess/Actions.vue'
 import Frame from '@renderer/components/Frame.vue'
-import Button from '@renderer/components/Button.vue'
-import VideoList from '@renderer/components/VideoList.vue'
+import Button from '@renderer/components/BatchProcess/Button.vue'
+import VideoList from '@renderer/components/BatchProcess/VideoList.vue'
 import { onMounted } from 'vue'
 import { useConfigStore } from '@renderer/stores/useConfigStore'
 

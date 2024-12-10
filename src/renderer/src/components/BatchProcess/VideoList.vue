@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VideoItem from '@renderer/components/VideoItem.vue'
+import VideoItem from '@renderer/components/BatchProcess/VideoItem.vue'
 import { useConfigStore } from '@renderer/stores/useConfigStore'
 const { config } = useConfigStore()
 </script>
