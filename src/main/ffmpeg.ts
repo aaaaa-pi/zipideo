@@ -124,15 +124,13 @@ export class Ffmpeg {
       const tempFilePath = this.tempFile()
 
       // 从AI命令中提取输出文件扩展名和名称模式
-      const outputParts = aiOptions.command.split(' ').pop()?.split('.')
-      const outputExt = outputParts ? `.${outputParts.pop()}` : ''
-      const outputNamePattern = outputParts?.join('.') || ''
+      const outputParts = aiOptions.command.match(/\s(\S+\.(?:mp4|gif|mkv|avi|mov|flv|wmv))$/)?.[1]?.split('.') || []
+      const outputExt = outputParts.length > 0 ? `.${outputParts.pop()}` : '.mp4'
+      const outputName = outputParts.join('.')
 
-      // 生成最终的输出文件名
+      // 生成最终的输出文件名，保留中文字符
       const info = path.parse(aiOptions.file.name)
-      const outputName = outputNamePattern
-        .replace('output', info.name)  // 替换 output 为原文件名
-        .replace(/[^a-zA-Z0-9]/g, '_') // 安全化文件名
+      const finalOutputName = outputName || info.name  // 如果没有指定输出名，使用输入文件名
 
       const tempFileWithExt = tempFilePath + outputExt
 
@@ -174,12 +172,13 @@ export class Ffmpeg {
           .on('progress', this.progressEvent.bind(this))
           .on('error', (err, stdout, stderr) => {
             console.error('FFmpeg error:', err.message)
+            console.error('FFmpeg stdout:', stdout)
             console.error('FFmpeg stderr:', stderr)
             this.error(err)
           })
           .on('end', () => {
             console.log('FFmpeg processing finished')
-            this.end(outputExt, outputName)
+            this.end(outputExt, finalOutputName)
           })
           .run()
       } else {
@@ -197,12 +196,13 @@ export class Ffmpeg {
           .on('progress', this.progressEvent.bind(this))
           .on('error', (err, stdout, stderr) => {
             console.error('FFmpeg error:', err.message)
+            console.error('FFmpeg stdout:', stdout)
             console.error('FFmpeg stderr:', stderr)
             this.error(err)
           })
           .on('end', () => {
             console.log('FFmpeg processing finished')
-            this.end(outputExt, outputName)
+            this.end(outputExt, finalOutputName)
           })
           .run()
       }
@@ -234,6 +234,7 @@ export class Ffmpeg {
         })
         .on('error', (err, stdout, stderr) => {
           console.error('FFmpeg error:', err.message)
+          console.error('FFmpeg stdout:', stdout)
           console.error('FFmpeg stderr:', stderr)
           this.error(err)
         })
