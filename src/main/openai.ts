@@ -1,28 +1,42 @@
 import { OpenAI, ClientOptions } from 'openai';
-import * as dotenv from 'dotenv';
-import { join } from 'path';
 
-// 加载 .env 文件
-dotenv.config({
-  path: join(process.cwd(), '.env')
-});
+let openai: OpenAI | null = null;
+let initError: string | null = null;
+let currentModel: string = 'gpt-3.5-turbo';
 
-// Validate and construct OpenAI configuration
-const openaiConfig: ClientOptions = {
-  apiKey: process.env.OPENAI_API_KEY
-};
-
-if (process.env.OPENAI_BASE_URL) {
+export function initializeOpenAI(config: { apiKey: string; baseUrl?: string; model?: string }): void {
   try {
-    // Validate the URL
-    new URL(process.env.OPENAI_BASE_URL);
-    openaiConfig.baseURL = process.env.OPENAI_BASE_URL;
+    if (!config.apiKey) {
+      initError = '未设置 OpenAI API 密钥，AI 功能将不可用。请在设置中配置 API 密钥。';
+      openai = null;
+      return;
+    }
+
+    const openaiConfig: ClientOptions = {
+      apiKey: config.apiKey
+    };
+
+    if (config.baseUrl) {
+      try {
+        // Validate the URL
+        new URL(config.baseUrl);
+        openaiConfig.baseURL = config.baseUrl;
+      } catch (error) {
+        console.error('Invalid OPENAI_BASE_URL:', error);
+      }
+    }
+
+    openai = new OpenAI(openaiConfig);
+    currentModel = config.model || 'gpt-3.5-turbo';
+    initError = null;
+
+    console.log('OpenAI initialized with model:', currentModel);
   } catch (error) {
-    console.error('Invalid OPENAI_BASE_URL:', error);
+    console.error('Error initializing OpenAI:', error);
+    initError = '初始化 AI 功能失败：' + (error instanceof Error ? error.message : '未知错误');
+    openai = null;
   }
 }
-
-const openai = new OpenAI(openaiConfig);
 
 export interface FFmpegCommand {
   command: string;
@@ -52,14 +66,14 @@ Return ONLY a valid JSON object with two properties:
 2. description: A simple, non-technical explanation of what changes will be made to the video`
 
 export async function generateFFmpegCommand(prompt: string, filename: string): Promise<FFmpegCommand> {
-  try {
-    console.log('Using OpenAI config:', {
-      baseURL: openaiConfig.baseURL,
-      model: process.env.AI_MODEL || 'gpt-3.5-turbo',
-    });
+  if (!openai) {
+    throw new Error(initError || 'AI 功能未初始化');
+  }
 
+  try {
+    console.log('Using model:', currentModel);
     const completion = await openai.chat.completions.create({
-      model: process.env.AI_MODEL || 'gpt-3.5-turbo',
+      model: currentModel,
       messages: [
         {
           role: 'system',
@@ -77,7 +91,7 @@ export async function generateFFmpegCommand(prompt: string, filename: string): P
 
     const response = completion.choices[0]?.message?.content;
     if (!response) {
-      throw new Error('No response from OpenAI');
+      throw new Error('AI 未返回有效响应');
     }
 
     try {
@@ -88,13 +102,13 @@ export async function generateFFmpegCommand(prompt: string, filename: string): P
 
       // Validate returned object has required fields
       if (!parsedResponse.command || !parsedResponse.description) {
-        throw new Error('Response missing required fields');
+        throw new Error('AI 返回的数据格式无效');
       }
 
       return parsedResponse as FFmpegCommand;
     } catch (error) {
       console.error('Failed to parse OpenAI response:', response);
-      throw new Error('Invalid response format from OpenAI');
+      throw new Error('AI 返回的数据格式无效');
     }
   } catch (error: unknown) {
     console.error('Error generating FFmpeg command:', error);

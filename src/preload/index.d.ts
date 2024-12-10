@@ -29,5 +29,6 @@ declare global {
         error?: string
       }>
     }
+    updateOpenAIConfig: (config: { apiKey: string; baseUrl: string; model: string }) => void
   }
 }

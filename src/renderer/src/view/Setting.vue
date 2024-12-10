@@ -3,6 +3,7 @@ import Card from '@renderer/components/BatchProcess/Card.vue'
 import FrameSizeSet from '@renderer/components/FrameSizeSet.vue'
 import SaveFile from '@renderer/components/SaveFile.vue'
 import About from '@renderer/components/BatchProcess/About.vue'
+import OpenAIConfig from '@renderer/components/OpenAIConfig.vue'
 </script>
 
 <template>
@@ -15,6 +16,9 @@ import About from '@renderer/components/BatchProcess/About.vue'
     </Card>
     <Card title="视频保存目录">
       <SaveFile />
+    </Card>
+    <Card title="OpenAI 配置">
+      <OpenAIConfig />
     </Card>
     <Card title="关于zipvideo">
       <About />

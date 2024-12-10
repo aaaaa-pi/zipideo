@@ -18,8 +18,14 @@ export const useConfigStore = defineStore(
       updateInfo: {
         speed: 0,
         percent: 0
-      } as UpdateProgressType
+      } as UpdateProgressType,
+      openaiConfig: {
+        apiKey: '',
+        baseUrl: '',
+        model: 'gpt-3.5-turbo'
+      }
     })
+
     const setSaveFilePath = (path: string) => {
       config.value.saveFilePath = path
     }
@@ -63,12 +69,13 @@ export const useConfigStore = defineStore(
     persist: {
       paths: [
         'config.sizes',
-        'config.sizes',
+        'config.size',
         'config.frames',
         'config.frame',
         'config.saveFilePath',
         'config.version',
-        'config.startForCheck'
+        'config.startForCheck',
+        'config.openaiConfig'
       ]
     }
   }

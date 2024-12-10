@@ -29,7 +29,10 @@ const api = {
   updateDownloaded: (callback: (_event: IpcRendererEvent) => void) =>
     ipcRenderer.on('downloaded', callback),
   generateFFmpegCommand: (prompt: string, filename: string) =>
-    ipcRenderer.invoke('generateFFmpegCommand', prompt, filename)
+    ipcRenderer.invoke('generateFFmpegCommand', prompt, filename),
+  updateOpenAIConfig: (config: { apiKey: string; baseUrl: string; model: string }) => {
+    ipcRenderer.invoke('update-openai-config', config)
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
