@@ -63,11 +63,13 @@ export class Ffmpeg {
     }
   }
 
-  end(ext: string) {
+  end(ext: string, outputName?: string) {
     console.log('Processing finished!')
 
     const tempFile = this.tempFile() + ext
-    const saveFile = this.getSaveFilePath(ext)
+    const saveFile = outputName
+      ? path.join(this.options!.saveDirectory, outputName + ext)
+      : this.getSaveFilePath(ext)
 
     console.log('Checking temp file:', tempFile)
     console.log('Target save file:', saveFile)
@@ -92,11 +94,7 @@ export class Ffmpeg {
       this.window!.webContents.send('mainProgressNotice', MainProcessNoticeType.END, 'end')
     } catch (error) {
       console.error('Error in file operations:', error)
-      this.window!.webContents.send(
-        'mainProgressNotice',
-        MainProcessNoticeType.ERROR,
-        error instanceof Error ? error.message : 'Failed to save output file'
-      )
+      this.error(error)
     }
   }
 
@@ -123,58 +121,91 @@ export class Ffmpeg {
   private processWithAICommand() {
     try {
       const aiOptions = this.options as AIProcessOptions
-      const commandParts = aiOptions.command.split(' ')
       const tempFilePath = this.tempFile()
 
-      console.log('Input file:', aiOptions.file.path)
-      console.log('Temp file path:', tempFilePath)
-      console.log('Command parts:', commandParts)
+      // 从AI命令中提取输出文件扩展名和名称模式
+      const outputParts = aiOptions.command.split(' ').pop()?.split('.')
+      const outputExt = outputParts ? `.${outputParts.pop()}` : ''
+      const outputNamePattern = outputParts?.join('.') || ''
 
-      // 获取原始命令中的输出文件扩展名
-      const outputFileName = commandParts[commandParts.length - 1]
-      const outputExt = path.extname(outputFileName) // 例如 .gif
+      // 生成最终的输出文件名
+      const info = path.parse(aiOptions.file.name)
+      const outputName = outputNamePattern
+        .replace('output', info.name)  // 替换 output 为原文件名
+        .replace(/[^a-zA-Z0-9]/g, '_') // 安全化文件名
 
-      // 移除原始命令中的输入文件和输出文件
-      const inputIndex = commandParts.indexOf('-i')
-      if (inputIndex !== -1) {
-        commandParts.splice(inputIndex, 2)
-      }
-      commandParts.pop() // 移除输出文件名
-
-      // 构建新的命令
-      let command = this.ffmpeg!
-
-      // 添加所有中间参数
-      commandParts.forEach(part => {
-        if (part !== 'ffmpeg' && part.trim() !== '') {
-          command = command.addOption(part.trim())
-        }
-      })
-
-      // 使用原始输出文件的扩展名
       const tempFileWithExt = tempFilePath + outputExt
 
-      // 添加输出选项
-      command
-        .outputOptions(['-y'])
-        .output(tempFileWithExt)
-        .on('start', (commandLine) => {
-          console.log('Spawned FFmpeg with command:', commandLine)
-        })
-        .on('progress', (progress) => {
-          console.log('Processing:', progress)
-          this.progressEvent(progress)
-        })
-        .on('error', (err, stdout, stderr) => {
-          console.error('FFmpeg error:', err.message)
-          console.error('FFmpeg stderr:', stderr)
-          this.error(err)
-        })
-        .on('end', () => {
-          console.log('FFmpeg processing finished')
-          this.end(outputExt)
-        })
-        .run()
+      // 解析命令，移除 ffmpeg 前缀和输入/输出文件部分
+      let command = aiOptions.command
+        .replace(/^ffmpeg\s+/, '')
+        .replace(/-i\s+[^\s]+/, '')  // 移除 -i input.mp4 部分
+        .replace(/\s+[^-][^/\s]*\.[^/\s]+$/, '')  // 移除输出文件名部分
+        .trim()
+
+      // 处理滤镜参数（支持 -vf 和 -filter:v 两种格式）
+      const filterRegex = /(?:-vf|-filter:v)\s+(?:["']([^"']+)["']|(\S+))/g
+      const matches = [...command.matchAll(filterRegex)]
+
+      if (matches.length > 0) {
+        // 提取所有滤镜参数
+        const filters = matches.map(match => match[1] || match[2])
+
+        // 移除原有的滤镜参数
+        command = command.replace(filterRegex, '')
+
+        // 重新构建滤镜参数，确保格式正确
+        const filterValue = filters
+          .map(filter => filter.replace(/["']/g, '')) // 移除引号
+          .join(',')
+
+        // 使用 fluent-ffmpeg 的 videoFilters 方法
+        console.log('Filter value:', filterValue)
+
+        this.ffmpeg!
+          .input(aiOptions.file.path)
+          .outputOptions(['-y'])
+          .videoFilters(filterValue) // 使用 videoFilters 方法而不是命令行参数
+          .outputOptions(command.trim().split(' ').filter(Boolean))
+          .output(tempFileWithExt)
+          .on('start', (commandLine) => {
+            console.log('Spawned FFmpeg with command:', commandLine)
+          })
+          .on('progress', this.progressEvent.bind(this))
+          .on('error', (err, stdout, stderr) => {
+            console.error('FFmpeg error:', err.message)
+            console.error('FFmpeg stderr:', stderr)
+            this.error(err)
+          })
+          .on('end', () => {
+            console.log('FFmpeg processing finished')
+            this.end(outputExt, outputName)
+          })
+          .run()
+      } else {
+        // 如果没有滤镜参数，使用普通的命令处理
+        const commandOptions = command.match(/(?:[^\s"']+|["'][^"']*["'])+/g) || []
+
+        this.ffmpeg!
+          .input(aiOptions.file.path)
+          .outputOptions(['-y'])
+          .outputOptions(commandOptions)
+          .output(tempFileWithExt)
+          .on('start', (commandLine) => {
+            console.log('Spawned FFmpeg with command:', commandLine)
+          })
+          .on('progress', this.progressEvent.bind(this))
+          .on('error', (err, stdout, stderr) => {
+            console.error('FFmpeg error:', err.message)
+            console.error('FFmpeg stderr:', stderr)
+            this.error(err)
+          })
+          .on('end', () => {
+            console.log('FFmpeg processing finished')
+            this.end(outputExt, outputName)
+          })
+          .run()
+      }
     } catch (error) {
       console.error('Error in processWithAICommand:', error)
       this.error(error)

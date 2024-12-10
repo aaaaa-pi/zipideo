@@ -1,31 +1,38 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import VideoProcessor from '@renderer/components/video/VideoProcessor.vue'
 import VideoUploader from '@renderer/components/video/VideoUploader.vue'
+import VideoProcessor from '@renderer/components/video/VideoProcessor.vue'
 
-const videoFile = ref<File | null>(null)
-
-const handleFileSelect = (file: File) => {
-  videoFile.value = file
+interface VideoFile {
+  path: string
+  name: string
+  size: number
 }
 
-const handleReset = () => {
-  videoFile.value = null
+const currentVideo = ref<VideoFile | null>(null)
+
+// 处理视频选择
+const handleVideoSelect = (file: VideoFile) => {
+  currentVideo.value = file
+}
+
+// 处理视频处理器关闭
+const handleProcessorClose = () => {
+  console.log('Processor closing...')  // 添加日志
+  currentVideo.value = null
 }
 </script>
 
 <template>
-  <div class="p-4">
-    <h2 class="text-xl font-bold mb-4">AI 视频命令生成</h2>
-
-    <div v-if="!videoFile" class="space-y-4">
-      <VideoUploader :on-file-select="handleFileSelect" />
-    </div>
-
+  <div class="h-full p-6">
     <VideoProcessor
+      v-if="currentVideo"
+      :videoFile="currentVideo"
+      @close="handleProcessorClose"
+    />
+    <VideoUploader
       v-else
-      :video-file="videoFile"
-      :on-reset="handleReset"
+      :onFileSelect="handleVideoSelect"
     />
   </div>
 </template>
