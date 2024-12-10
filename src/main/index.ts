@@ -1,11 +1,11 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import ipc from './ipc'
 import autoUpdater from './autoUpdater'
 
-function createWindow(): BrowserWindow {
+async function createWindow(): Promise<BrowserWindow> {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 390,
@@ -20,7 +20,16 @@ function createWindow(): BrowserWindow {
       sandbox: false
     }
   })
-  is.dev && mainWindow.webContents.openDevTools()
+
+  if (process.env.VITE_DEV_SERVER_URL) {
+    // 开发环境
+    await mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
+    // 打开开发工具以便调试
+    mainWindow.webContents.openDevTools()
+  } else {
+    // 生产环境
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -31,21 +40,13 @@ function createWindow(): BrowserWindow {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-
   return mainWindow
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -59,7 +60,7 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  const win = createWindow()
+  const win = await createWindow()
   ipc(win)
   autoUpdater(win)
 
