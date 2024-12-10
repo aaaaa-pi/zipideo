@@ -29,6 +29,28 @@ export interface FFmpegCommand {
   description: string;
 }
 
+const SYSTEM_PROMPT = `You are an expert in FFmpeg video processing
+
+Important notes:
+- Generate commands that are compatible with fluent-ffmpeg in Electron
+- Focus on common video processing tasks like compression, format conversion, and filters
+- The description should be user-friendly and explain the effect in simple terms
+- The description MUST be in the same language as the user's input task
+- Commands MUST:
+  * Start with "ffmpeg -i"
+  * Use basic filters with proper syntax:
+    - For fps: -filter:v fps=30
+    - For scale: -filter:v scale=1280:720
+    - For multiple filters: -filter:v "fps=30,scale=1280:720"
+  * Avoid using quotes in filter values
+  * Avoid filter_complex unless absolutely necessary
+  * Include a descriptive output filename (e.g. input_30fps.mp4)
+  * Keep output filename related to the effect (e.g. input_compressed.mp4)
+
+Return ONLY a valid JSON object with two properties:
+1. command: The FFmpeg command to execute
+2. description: A simple, non-technical explanation of what changes will be made to the video`
+
 export async function generateFFmpegCommand(prompt: string, filename: string): Promise<FFmpegCommand> {
   try {
     console.log('Using OpenAI config:', {
@@ -41,21 +63,7 @@ export async function generateFFmpegCommand(prompt: string, filename: string): P
       messages: [
         {
           role: 'system',
-          content: `You are an expert in FFmpeg video processing
-
-          Important notes:
-          - Generate commands that are compatible with ffmpeg.wasm in the browser environment
-          - Avoid using features not supported in ffmpeg.wasm
-          - The description should be user-friendly and explain the effect in simple terms
-          - The description MUST be in the same language as the user's input task
-          - Commands MUST:
-            * Start with "ffmpeg -i"
-            * Use the provided input filename
-            * Include an output filename (can be any valid filename)
-
-          Return ONLY a valid JSON object with two properties:
-          1. command: The FFmpeg command to execute
-          2. description: A simple, non-technical explanation of what changes will be made to the video`
+          content: SYSTEM_PROMPT
         },
         {
           role: 'user',
