@@ -2,22 +2,37 @@ appId: com.electron.app
 productName: zipideo
 directories:
   buildResources: build
+  output: dist
 files:
+  - 'out/**/*'
+  - 'resources/**/*'
+  - 'package.json'
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+asar: true
 asarUnpack:
-  - resources/**
+  - 'resources/**'
+  - 'out/main/**/*.node'
+  - 'node_modules/@ffmpeg-installer/**'
+  - 'node_modules/@ffprobe-installer/**'
+  - 'node_modules/fluent-ffmpeg/**'
+extraMetadata:
+  main: './out/main/index.js'
 win:
   executableName: zipideo
+  requestedExecutionLevel: highestAvailable
+  icon: build/icon.png
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  oneClick: false
+  allowToChangeInstallationDirectory: true
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
