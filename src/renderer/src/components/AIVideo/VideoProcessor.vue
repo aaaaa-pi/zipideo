@@ -4,6 +4,7 @@ import { Refresh } from '@element-plus/icons-vue'
 import { VideoTwo, CloseOne } from '@icon-park/vue-next'
 import useVideoProcessing from '@renderer/composables/useAIVideoProcessing'
 import useAICommand from '@renderer/composables/useAICommand'
+import { useConfigStore } from '@renderer/stores/useConfigStore'
 
 interface Props {
   videoFile: {
@@ -16,35 +17,25 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['close'])
 
-const {
-  isProcessing,
-  progress,
-  error,
-  startProcessing,
-  setupProgressListener,
-  handleDownload
-} = useVideoProcessing()
+const { isProcessing, progress, error, startProcessing, setupProgressListener, handleDownload } =
+  useVideoProcessing()
 
-const {
-  prompt,
-  command,
-  description,
-  isGenerating,
-  handleGenerateCommand
-} = useAICommand()
+const { setAIVideoError } = useConfigStore()
+
+const { prompt, command, description, isGenerating, handleGenerateCommand } = useAICommand()
 
 // 处理生成命令
 const handleGenerate = async () => {
   if (!prompt.value?.trim()) {
-    error.value = '请输入处理需求描述'
+    setAIVideoError('请输入处理需求描述')
     return
   }
 
-  error.value = ''
+  setAIVideoError('')
   try {
     await handleGenerateCommand(props.videoFile.name)
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '发生错误'
+    setAIVideoError(err instanceof Error ? err.message : '发生错误')
   }
 }
 
@@ -60,7 +51,7 @@ onMounted(() => {
 const handleClose = () => {
   console.log('close')
   if (isProcessing.value || isGenerating.value) {
-    return  // 如果正在处理或生成中，不允许关闭
+    return // 如果正在处理或生成中，不允许关闭
   }
   emit('close')
 }
@@ -69,19 +60,24 @@ const handleClose = () => {
 <template>
   <div class="w-full space-y-2 font-mono">
     <!-- 当前视频信息 -->
-    <div class="flex items-center justify-between bg-white p-4 rounded-lg border-2 border-[#2a2a2a]">
+    <div
+      class="flex items-center justify-between bg-white p-4 rounded-lg border-2 border-[#2a2a2a]"
+    >
       <div class="flex items-center space-x-2">
-        <video-two theme="outline" size="36" fill="#0a65cc"/>
+        <video-two theme="outline" size="36" fill="#0a65cc" />
         <div>
           <label class="block">当前视频</label>
           <p class="text-sm text-gray-600">{{ videoFile.name }}</p>
-          <p class="text-sm text-gray-500">
-            {{ (videoFile.size / (1024 * 1024)).toFixed(2) }} MB
-          </p>
+          <p class="text-sm text-gray-500">{{ (videoFile.size / (1024 * 1024)).toFixed(2) }} MB</p>
         </div>
       </div>
       <div class="delIcon">
-        <close-one theme="outline" size="15" @click="handleClose" :class="{ 'cursor-not-allowed': isProcessing || isGenerating }"/>
+        <close-one
+          theme="outline"
+          size="15"
+          :class="{ 'cursor-not-allowed': isProcessing || isGenerating }"
+          @click="handleClose"
+        />
       </div>
     </div>
 
@@ -101,10 +97,10 @@ const handleClose = () => {
       <!-- 生成命令按钮 -->
       <el-button
         type="primary"
-        @click="handleGenerate"
         :loading="isGenerating"
         color="#0a65cc"
         class="w-full hover:bg-blue-600 text-white rounded-lg h-12 text-base border-2 border-[#2a2a2a] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+        @click="handleGenerate"
       >
         {{ isGenerating ? '生成中...' : '生成命令' }}
       </el-button>
@@ -125,9 +121,9 @@ const handleClose = () => {
             <h3 class="font-bold text-[#2a2a2a]">生成的命令</h3>
             <el-button
               plain
-              @click="command = ''"
               size="small"
               class="border-2 border-[#2a2a2a] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              @click="command = ''"
             >
               清除
             </el-button>
@@ -186,15 +182,12 @@ const handleClose = () => {
           >
             打开文件位置
           </el-button>
-          <p class="text-xs text-gray-500">
-            文件已保存到默认目录
-          </p>
+          <p class="text-xs text-gray-500">文件已保存到默认目录</p>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 
 <style lang="scss" scoped>
 .delIcon {
