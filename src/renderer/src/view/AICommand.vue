@@ -3,7 +3,7 @@ import { useConfigStore } from '@renderer/stores/useConfigStore'
 import VideoUploader from '@renderer/components/AIVideo/VideoUploader.vue'
 import VideoProcessor from '@renderer/components/AIVideo/VideoProcessor.vue'
 
-const { config, setCurrentAIVideo } = useConfigStore()
+const { config, setCurrentAIVideo, setAIVideoProgress, setAIVideoError } = useConfigStore()
 
 // 处理视频选择
 const handleVideoSelect = (file: File) => {
@@ -17,6 +17,8 @@ const handleVideoSelect = (file: File) => {
 // 处理视频处理器关闭
 const handleProcessorClose = () => {
   setCurrentAIVideo(null)
+  setAIVideoProgress(0)
+  setAIVideoError('')
 }
 </script>
 
