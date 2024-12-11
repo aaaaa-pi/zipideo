@@ -7,6 +7,7 @@ import { onMounted } from 'vue'
 import { useConfigStore } from '@renderer/stores/useConfigStore'
 
 const { config, fetchDefaultSavePath, startForCheckUpdate, getCurrentVersion } = useConfigStore()
+
 onMounted(async () => {
   if (!config.saveFilePath) {
     await fetchDefaultSavePath()
@@ -15,6 +16,14 @@ onMounted(async () => {
     startForCheckUpdate()
   }
   getCurrentVersion()
+
+  if (config.openaiConfig) {
+    window.api.updateOpenAIConfig({
+      apiKey: config.openaiConfig.apiKey,
+      baseUrl: config.openaiConfig.baseUrl,
+      model: config.openaiConfig.model
+    })
+  }
 })
 </script>
 

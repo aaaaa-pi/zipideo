@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useConfigStore } from '@renderer/stores/useConfigStore'
 import VideoUploader from '@renderer/components/AIVideo/VideoUploader.vue'
 import VideoProcessor from '@renderer/components/AIVideo/VideoProcessor.vue'
 
-interface VideoFile {
-  path: string
-  name: string
-  size: number
-}
-
-const currentVideo = ref<VideoFile | null>(null)
+const { config, setCurrentAIVideo } = useConfigStore()
 
 // 处理视频选择
-const handleVideoSelect = (file: VideoFile) => {
-  currentVideo.value = file
+const handleVideoSelect = (file: File) => {
+  setCurrentAIVideo({
+    path: file.path,
+    name: file.name,
+    size: file.size
+  })
 }
 
 // 处理视频处理器关闭
 const handleProcessorClose = () => {
-  currentVideo.value = null
+  setCurrentAIVideo(null)
 }
 </script>
 
@@ -26,13 +24,14 @@ const handleProcessorClose = () => {
   <div class="h-full p-6 flex flex-col">
     <h2 class="text-2xl font-bold mb-4 text-center font-mono">AI 视频处理</h2>
     <VideoProcessor
-      v-if="currentVideo"
-      :videoFile="currentVideo"
+      v-if="config.currentAIVideo"
+      :videoFile="config.currentAIVideo"
       @close="handleProcessorClose"
     />
     <VideoUploader
       v-else
       :onFileSelect="handleVideoSelect"
+      :config="config"
     />
   </div>
 </template>
