@@ -1,12 +1,16 @@
 import { useConfigStore } from '@renderer/stores/useConfigStore'
 import { ElMessage } from 'element-plus'
 import { VideoType, VideoState, MainProcessNoticeType } from '@renderer/types'
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, onUnmounted } from 'vue'
+import { IpcRendererEvent } from 'electron'
+
 const isRun = ref<boolean>(false)
+
 export default () => {
-  const { config } = useConfigStore()
+  const { config, setProcessingState, setCurrentAIVideo } = useConfigStore()
   const currentVideo = ref<VideoType>()
   const { saveFilePath } = toRefs(config)
+
   const validate = () => {
     let messageText = ''
     if (saveFilePath.value.trim() === '') {
@@ -23,6 +27,7 @@ export default () => {
     }
     return messageText === ''
   }
+
   const getCompressFile = () => {
     currentVideo.value = config.files.find((video) => video.state == VideoState.READY)
     if (currentVideo.value) {
@@ -31,36 +36,59 @@ export default () => {
       isRun.value = false
     }
   }
+
   const progressNotice = () => {
-    window.api.mainProgressNotice((type: MainProcessNoticeType, data: number | string) => {
-      switch (type) {
-        case MainProcessNoticeType.PROGRESS:
-          currentVideo.value!.progress = data as number
-          break
-        case MainProcessNoticeType.END:
-          currentVideo.value!.state = VideoState.FINISH
-          compress()
-          break
-        case MainProcessNoticeType.ERROR:
-          currentVideo.value!.state = VideoState.ERROR
-          ElMessage.error({ message: data as string, grouping: true })
-          break
-        case MainProcessNoticeType.DIREDCTORY_CHECK:
-          ElMessage.warning({ message: '视频保存目录不存在', grouping: true })
-          currentVideo.value!.state = VideoState.READY
-          isRun.value = false
-          break
-        case MainProcessNoticeType.STOP:
-          currentVideo.value!.state = VideoState.STOP
-          isRun.value = false
-          break
+    window.electron.ipcRenderer.removeAllListeners('mainProgressNotice')
+
+    window.electron.ipcRenderer.on(
+      'mainProgressNotice',
+      (_event: IpcRendererEvent, type: MainProcessNoticeType, data: number | string) => {
+        switch (type) {
+          case MainProcessNoticeType.PROGRESS:
+            currentVideo.value!.progress = data as number
+            break
+          case MainProcessNoticeType.END:
+            currentVideo.value!.state = VideoState.FINISH
+            if (!config.files.some(file => file.state === VideoState.READY)) {
+              isRun.value = false
+              setProcessingState(false, '')
+            }
+            compress()
+            break
+          case MainProcessNoticeType.ERROR:
+            currentVideo.value!.state = VideoState.ERROR
+            ElMessage.error({ message: data as string, grouping: true })
+            isRun.value = false
+            setProcessingState(false, '')
+            break
+          case MainProcessNoticeType.DIREDCTORY_CHECK:
+            ElMessage.warning({ message: '视频保存目录不存在', grouping: true })
+            currentVideo.value!.state = VideoState.READY
+            isRun.value = false
+            setProcessingState(false, '')
+            break
+          case MainProcessNoticeType.STOP:
+            currentVideo.value!.state = VideoState.STOP
+            isRun.value = false
+            setProcessingState(false, '')
+            break
+        }
       }
-    })
+    )
   }
 
   const run = () => {
     if (isRun.value) return
+
+    if (config.isProcessing && config.processingType === 'ai') {
+      ElMessage.warning({ message: '请等待AI处理完成后再进行压缩', grouping: true })
+      return
+    }
+
     isRun.value = true
+    setProcessingState(true, 'batch')
+    setCurrentAIVideo(null)
+    progressNotice()
     compress()
   }
 
@@ -71,7 +99,11 @@ export default () => {
       }
     })
     getCompressFile()
-    if (validate() === false) return
+    if (validate() === false) {
+      isRun.value = false
+      setProcessingState(false, '')
+      return
+    }
     window.api.compress({
       file: { ...currentVideo.value! },
       fps: Number(config.frame),
@@ -79,6 +111,10 @@ export default () => {
       saveDirectory: config.saveFilePath
     })
   }
+
+  onUnmounted(() => {
+    window.electron.ipcRenderer.removeAllListeners('mainProgressNotice')
+  })
 
   return { run, isRun, progressNotice }
 }

@@ -23,7 +23,12 @@ export const useConfigStore = defineStore(
         apiKey: '',
         baseUrl: '',
         model: 'gpt-3.5-turbo'
-      }
+      },
+      isProcessing: false,
+      processingType: '' as 'ai' | 'batch' | '',
+      aiVideoProgress: 0,
+      aiVideoError: '',
+      currentAIVideo: null as { path: string; name: string; size: number } | null
     })
 
     const setSaveFilePath = (path: string) => {
@@ -56,13 +61,34 @@ export const useConfigStore = defineStore(
       })
     }
 
+    const setProcessingState = (isProcessing: boolean, type: 'ai' | 'batch' | '') => {
+      config.value.isProcessing = isProcessing
+      config.value.processingType = type
+    }
+
+    const setAIVideoProgress = (progress: number) => {
+      config.value.aiVideoProgress = progress
+    }
+
+    const setAIVideoError = (error: string) => {
+      config.value.aiVideoError = error
+    }
+
+    const setCurrentAIVideo = (video: { path: string; name: string; size: number } | null) => {
+      config.value.currentAIVideo = video
+    }
+
     return {
       config,
       fetchDefaultSavePath,
       setSaveFilePath,
       startForCheckUpdate,
       getCurrentVersion,
-      getUpdateProgress
+      getUpdateProgress,
+      setProcessingState,
+      setAIVideoProgress,
+      setAIVideoError,
+      setCurrentAIVideo
     }
   },
   {

@@ -1,21 +1,32 @@
-import { ref } from 'vue'
+import { onUnmounted, computed } from 'vue'
 import { MainProcessNoticeType } from '@renderer/types'
 import { ElMessage } from 'element-plus'
+import { IpcRendererEvent } from 'electron'
+import { useConfigStore } from '@renderer/stores/useConfigStore'
 
 export default function useVideoProcessing() {
-  const isProcessing = ref(false)
-  const progress = ref(0)
-  const error = ref('')
-  const currentVideoFile = ref<{ path: string; name: string } | null>(null)
+  const { config, setProcessingState, setAIVideoProgress, setAIVideoError, setCurrentAIVideo } = useConfigStore()
+  let progressListener: ((event: IpcRendererEvent, type: MainProcessNoticeType, data: number | string) => void) | null = null
 
-  const startProcessing = async (videoFile: { path: string; name: string }, command: string) => {
+  const isProcessing = computed(() => config.isProcessing && config.processingType === 'ai')
+  const progress = computed(() => config.aiVideoProgress)
+  const error = computed(() => config.aiVideoError)
+  const currentVideo = computed(() => config.currentAIVideo)
+
+  const startProcessing = async (videoFile: { path: string; name: string; size: number }, command: string) => {
     if (!command) return
 
-    isProcessing.value = true
-    currentVideoFile.value = videoFile
+    // 检查是否有其他处理正在进行
+    if (config.isProcessing && config.processingType === 'batch') {
+      ElMessage.warning({ message: '请等待批量处理完成后再进行AI处理', grouping: true })
+      return
+    }
+
+    setProcessingState(true, 'ai')
+    setCurrentAIVideo(videoFile)
     try {
-      error.value = ''
-      progress.value = 0
+      setAIVideoError('')
+      setAIVideoProgress(0)
 
       // 调用主进程处理视频
       window.api.compress({
@@ -27,37 +38,45 @@ export default function useVideoProcessing() {
         saveDirectory: await window.api.getDefaultSavePath()
       })
     } catch (err) {
-      error.value = err instanceof Error ? err.message : '处理视频时发生错误'
-      isProcessing.value = false
+      setAIVideoError(err instanceof Error ? err.message : '处理视频时发生错误')
+      setProcessingState(false, '')
     }
   }
 
   const setupProgressListener = () => {
-    window.api.mainProgressNotice(async (type: MainProcessNoticeType, data: number | string) => {
+    window.electron.ipcRenderer.removeAllListeners('mainProgressNotice')
+
+    console.log('Setting up progress listener')
+    progressListener = (_event: IpcRendererEvent, type: MainProcessNoticeType, data: number | string) => {
+      console.log('Received progress update:', type, data)
       switch (type) {
         case MainProcessNoticeType.PROGRESS: {
-          progress.value = data as number
+          console.log('Updating progress to:', data)
+          setAIVideoProgress(data as number)
           break
         }
         case MainProcessNoticeType.END: {
-          isProcessing.value = false
-          const savePath = await window.api.getDefaultSavePath()
-          ElMessage.success({ message: '视频处理完成', grouping: true })
-          await window.api.openFolder(savePath)
+          setProcessingState(false, '')
+          window.api.getDefaultSavePath().then(savePath => {
+            ElMessage.success({ message: '视频处理完成', grouping: true })
+            window.api.openFolder(savePath)
+          })
           break
         }
         case MainProcessNoticeType.ERROR: {
-          error.value = data as string
-          isProcessing.value = false
+          setAIVideoError(data as string)
+          setProcessingState(false, '')
           ElMessage.error({ message: data as string, grouping: true })
           break
         }
         case MainProcessNoticeType.STOP: {
-          isProcessing.value = false
+          setProcessingState(false, '')
           break
         }
       }
-    })
+    }
+
+    window.electron.ipcRenderer.on('mainProgressNotice', progressListener)
   }
 
   const handleDownload = async () => {
@@ -65,10 +84,16 @@ export default function useVideoProcessing() {
     await window.api.openFolder(savePath)
   }
 
+  onUnmounted(() => {
+    window.electron.ipcRenderer.removeAllListeners('mainProgressNotice')
+    progressListener = null
+  })
+
   return {
     isProcessing,
     progress,
     error,
+    currentVideo,
     startProcessing,
     setupProgressListener,
     handleDownload
