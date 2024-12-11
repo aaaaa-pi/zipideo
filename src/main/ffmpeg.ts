@@ -160,8 +160,9 @@ export class Ffmpeg {
         // 使用 fluent-ffmpeg 的 videoFilters 方法
         console.log('Filter value:', filterValue)
 
-        this.ffmpeg!
-          .input(aiOptions.file.path)
+        const ffmpegCommand = this.ffmpeg!.input(aiOptions.file.path)
+
+        ffmpegCommand
           .outputOptions(['-y'])
           .videoFilters(filterValue) // 使用 videoFilters 方法而不是命令行参数
           .outputOptions(command.trim().split(' ').filter(Boolean))
@@ -185,8 +186,9 @@ export class Ffmpeg {
         // 如果没有滤镜参数，使用普通的命令处理
         const commandOptions = command.match(/(?:[^\s"']+|["'][^"']*["'])+/g) || []
 
-        this.ffmpeg!
-          .input(aiOptions.file.path)
+        const ffmpegCommand = this.ffmpeg!.input(aiOptions.file.path)
+
+        ffmpegCommand
           .outputOptions(['-y'])
           .outputOptions(commandOptions)
           .output(tempFileWithExt)
@@ -257,6 +259,98 @@ export class Ffmpeg {
       } catch (error) {
         console.error('Error stopping ffmpeg:', error)
       }
+    }
+  }
+
+  private processCommand(command: string, inputPath: string, outputDir: string, callback?: () => void) {
+    try {
+      // 从命令中提取输出文件名
+      const outputMatch = command.match(/\s(\S+\.(?:mp4|gif|mkv|avi|mov|flv|wmv|gif))$/)?.[1]
+      if (!outputMatch) {
+        throw new Error('Cannot find output filename in command')
+      }
+
+      // 构建完整的输出路径
+      const outputPath = path.join(outputDir, outputMatch)
+
+      // 检查是否包含视频过滤器
+      if (command.includes('-vf') || command.includes('filter_complex')) {
+        // 提取过滤器参数
+        const filterMatch = command.match(/-vf\s+"([^"]+)"|filter_complex\s+"([^"]+)"/)?.[1] || command.match(/-vf\s+([^\s]+)|filter_complex\s+([^\s]+)/)?.[1]
+
+        if (!filterMatch) {
+          throw new Error('Cannot parse filter parameter')
+        }
+
+        const ffmpegCommand = this.ffmpeg!.input(inputPath)
+
+        // 如果是GIF转换命令，使用特殊处理
+        if (filterMatch.includes('palettegen') || filterMatch.includes('paletteuse')) {
+          // 使用单个复杂过滤器
+          ffmpegCommand
+            .videoFilters(filterMatch)
+            .outputOptions(['-y'])
+            .on('start', (commandLine) => {
+              console.log('Spawned FFmpeg with command:', commandLine)
+            })
+            .on('progress', (progress) => {
+              // 使用帧数来计算进度
+              if (progress.frames) {
+                const percent = Math.min(100, (progress.frames / 500) * 100)
+                this.progressEvent({ percent })
+              }
+            })
+            .on('error', this.error.bind(this))
+            .on('end', () => {
+              console.log('FFmpeg processing finished')
+              this.progressEvent({ percent: 100 })
+              if (callback) callback()
+            })
+        } else {
+          // 其他过滤器命令
+          ffmpegCommand
+            .videoFilters(filterMatch)
+            .outputOptions(['-y'])
+            .on('start', (commandLine) => {
+              console.log('Spawned FFmpeg with command:', commandLine)
+            })
+            .on('progress', this.progressEvent.bind(this))
+            .on('error', this.error.bind(this))
+            .on('end', () => {
+              console.log('FFmpeg processing finished')
+              if (callback) callback()
+            })
+        }
+
+        ffmpegCommand.output(outputPath).run()
+      } else {
+        // 处理普通命令
+        const cmdStr = command
+          .replace(/^ffmpeg\s+/, '')
+          .replace(/-i\s+[^\s]+/, '')
+          .replace(/\s+[^-][^/\s]*\.[^/\s]+$/, '')
+          .trim()
+
+        const ffmpegCommand = this.ffmpeg!.input(inputPath)
+
+        ffmpegCommand
+          .outputOptions(['-y'])
+          .outputOptions(cmdStr.split(' ').filter(Boolean))
+          .output(outputPath)
+          .on('start', (commandLine) => {
+            console.log('Spawned FFmpeg with command:', commandLine)
+          })
+          .on('progress', this.progressEvent.bind(this))
+          .on('error', this.error.bind(this))
+          .on('end', () => {
+            console.log('FFmpeg processing finished')
+            if (callback) callback()
+          })
+          .run()
+      }
+    } catch (error) {
+      console.error('Error in processCommand:', error)
+      this.error(error)
     }
   }
 }
