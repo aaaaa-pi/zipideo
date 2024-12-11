@@ -172,19 +172,22 @@ const handleClose = () => {
       </div>
 
       <!-- 输出结果 -->
-      <div v-if="!isProcessing && progress === 100" class="space-y-4 bg-white p-4 rounded-lg">
-        <h3 class="font-bold text-[#2a2a2a]">处理完成</h3>
-        <div class="flex items-center space-x-4">
-          <el-button
-            type="primary"
-            class="bg-blue-500 hover:bg-blue-600 text-white rounded-lg h-12 text-xs font-['Press_Start_2P']"
-            @click="handleDownload"
-          >
-            打开文件位置
-          </el-button>
-          <p class="text-xs text-gray-500">文件已保存到默认目录</p>
+      <div  v-if="!isProcessing && progress === 100" class="space-y-4 bg-white p-4 rounded-lg border-2 border-[#2a2a2a]">
+        <div class="flex justify-between items-center">
+            <h3 class="font-bold text-[#2a2a2a]">处理完成</h3>
+            <p class="text-xs text-gray-500">文件已保存到默认目录</p>
+          </div>
+            <div class="flex items-center space-x-4">
+              <el-button
+              type="primary"
+              class="w-full border-2 border-[#2a2a2a] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              @click="handleDownload"
+            >
+              打开文件位置
+            </el-button>
+          </div>
         </div>
-      </div>
+
     </div>
   </div>
 </template>
