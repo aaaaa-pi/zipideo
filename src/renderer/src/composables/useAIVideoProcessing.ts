@@ -57,10 +57,8 @@ export default function useVideoProcessing() {
         }
         case MainProcessNoticeType.END: {
           setProcessingState(false, '')
-          window.api.getDefaultSavePath().then(savePath => {
-            ElMessage.success({ message: '视频处理完成', grouping: true })
-            window.api.openFolder(savePath)
-          })
+          setAIVideoProgress(100)
+          ElMessage.success({ message: '视频处理完成', grouping: true })
           break
         }
         case MainProcessNoticeType.ERROR: {
